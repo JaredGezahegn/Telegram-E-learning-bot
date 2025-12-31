@@ -37,6 +37,23 @@ class HealthCheckHandler(BaseHTTPRequestHandler):
                     'timestamp': time.time()
                 }
                 self.wfile.write(json.dumps(error_response).encode())
+        elif self.path == '/debug':
+            try:
+                debug_info = self.get_debug_info()
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps(debug_info).encode())
+            except Exception as e:
+                logger.error(f"Debug info failed: {e}")
+                self.send_response(500)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                error_response = {
+                    'error': str(e),
+                    'timestamp': time.time()
+                }
+                self.wfile.write(json.dumps(error_response).encode())
         else:
             self.send_response(404)
             self.end_headers()
@@ -44,16 +61,30 @@ class HealthCheckHandler(BaseHTTPRequestHandler):
     def get_health_status(self) -> Dict[str, Any]:
         """Get current health status of the application."""
         try:
-            # Check database connectivity
-            conn = sqlite3.connect('lessons.db', timeout=5)
-            cursor = conn.cursor()
-            cursor.execute('SELECT COUNT(*) FROM lessons')
-            lesson_count = cursor.fetchone()[0]
-            conn.close()
+            # Import here to avoid circular imports
+            import sys
+            import os
+            sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+            
+            from services.database_factory import create_lesson_repository
+            
+            # Use the configured database (SQLite or Supabase)
+            repo = create_lesson_repository()
+            
+            # Test connection and get lesson count
+            if hasattr(repo, 'get_all_lessons'):
+                lessons = repo.get_all_lessons()
+                lesson_count = len(lessons)
+                database_type = "supabase" if "Supabase" in str(type(repo)) else "sqlite"
+            else:
+                # Fallback for older repository interface
+                lesson_count = 0
+                database_type = "unknown"
             
             return {
                 'healthy': True,
                 'database': 'connected',
+                'database_type': database_type,
                 'lesson_count': lesson_count,
                 'timestamp': time.time(),
                 'status': 'operational'
@@ -65,6 +96,43 @@ class HealthCheckHandler(BaseHTTPRequestHandler):
                 'error': str(e),
                 'timestamp': time.time(),
                 'status': 'degraded'
+            }
+    
+    def get_debug_info(self) -> Dict[str, Any]:
+        """Get debug information about configuration and environment."""
+        import os
+        
+        try:
+            # Import here to avoid circular imports
+            import sys
+            sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+            
+            from config import get_config
+            
+            config = get_config()
+            
+            return {
+                'environment_variables': {
+                    'DATABASE_TYPE': os.getenv('DATABASE_TYPE'),
+                    'SUPABASE_URL': os.getenv('SUPABASE_URL'),
+                    'SUPABASE_ANON_KEY': os.getenv('SUPABASE_ANON_KEY')[:20] + '...' if os.getenv('SUPABASE_ANON_KEY') else None,
+                    'TELEGRAM_BOT_TOKEN': os.getenv('TELEGRAM_BOT_TOKEN')[:20] + '...' if os.getenv('TELEGRAM_BOT_TOKEN') else None,
+                    'CHANNEL_ID': os.getenv('CHANNEL_ID'),
+                },
+                'config_values': {
+                    'database_type': config.database_type,
+                    'database_path': config.database_path,
+                    'supabase_url': config.supabase_url,
+                    'channel_id': config.channel_id,
+                    'posting_time': config.posting_time,
+                    'timezone': config.timezone,
+                },
+                'timestamp': time.time()
+            }
+        except Exception as e:
+            return {
+                'error': str(e),
+                'timestamp': time.time()
             }
     
     def log_message(self, format, *args):
