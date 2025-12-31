@@ -2,15 +2,9 @@
 
 import os
 import logging
+import requests
 from typing import Optional, List, Dict, Any
 from datetime import datetime
-import asyncio
-
-try:
-    from supabase import create_client, Client
-    SUPABASE_AVAILABLE = True
-except ImportError:
-    SUPABASE_AVAILABLE = False
 
 from .lesson import Lesson
 from .posting_history import PostingHistory
@@ -20,74 +14,38 @@ logger = logging.getLogger(__name__)
 
 
 class SupabaseManager:
-    """Manages Supabase database connections and operations."""
+    """Manages Supabase database connections and operations using HTTP requests."""
     
     def __init__(self, url: Optional[str] = None, key: Optional[str] = None):
         """Initialize Supabase manager."""
-        if not SUPABASE_AVAILABLE:
-            raise ImportError("Supabase client not installed. Run: pip install supabase")
-        
         self.url = url or os.getenv('SUPABASE_URL')
         self.key = key or os.getenv('SUPABASE_ANON_KEY')
         
         if not self.url or not self.key:
             raise ValueError("SUPABASE_URL and SUPABASE_ANON_KEY must be provided")
         
-        self.client: Client = create_client(self.url, self.key)
+        self.base_url = f"{self.url}/rest/v1"
+        self.headers = {
+            'apikey': self.key,
+            'Authorization': f'Bearer {self.key}',
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+        }
         self._initialized = False
     
-    async def initialize_database(self) -> bool:
-        """Initialize database schema."""
+    def test_connection(self) -> bool:
+        """Test database connection."""
         try:
-            # Create lessons table
-            await self._create_lessons_table()
-            
-            # Create posting history table
-            await self._create_posting_history_table()
-            
-            # Create bot config table
-            await self._create_bot_config_table()
-            
-            self._initialized = True
-            logger.info("Supabase database initialized successfully")
-            return True
-            
+            response = requests.get(
+                f"{self.base_url}/lessons?select=id&limit=1",
+                headers=self.headers,
+                timeout=10
+            )
+            logger.info("Supabase connection test successful")
+            return response.status_code == 200
         except Exception as e:
-            logger.error(f"Failed to initialize Supabase database: {e}")
+            logger.error(f"Supabase connection test failed: {e}")
             return False
-    
-    async def _create_lessons_table(self):
-        """Create lessons table if it doesn't exist."""
-        # Note: In Supabase, you typically create tables via the dashboard
-        # This method can be used to verify table exists or create via SQL
-        try:
-            # Test if table exists by trying to select from it
-            result = self.client.table('lessons').select('id').limit(1).execute()
-            logger.info("Lessons table exists")
-        except Exception:
-            logger.warning("Lessons table may not exist. Please create it in Supabase dashboard.")
-            # You could also create it programmatically:
-            # self.client.rpc('create_lessons_table').execute()
-    
-    async def _create_posting_history_table(self):
-        """Create posting history table if it doesn't exist."""
-        try:
-            result = self.client.table('posting_history').select('id').limit(1).execute()
-            logger.info("Posting history table exists")
-        except Exception:
-            logger.warning("Posting history table may not exist. Please create it in Supabase dashboard.")
-    
-    async def _create_bot_config_table(self):
-        """Create bot config table if it doesn't exist."""
-        try:
-            result = self.client.table('bot_config').select('id').limit(1).execute()
-            logger.info("Bot config table exists")
-        except Exception:
-            logger.warning("Bot config table may not exist. Please create it in Supabase dashboard.")
-    
-    def is_initialized(self) -> bool:
-        """Check if database is initialized."""
-        return self._initialized
     
     # Lesson operations
     def create_lesson(self, lesson: Lesson) -> Optional[int]:
@@ -105,13 +63,21 @@ class SupabaseManager:
                 'usage_count': lesson.usage_count or 0
             }
             
-            result = self.client.table('lessons').insert(lesson_data).execute()
+            response = requests.post(
+                f"{self.base_url}/lessons",
+                headers=self.headers,
+                json=lesson_data,
+                timeout=10
+            )
             
-            if result.data:
-                lesson_id = result.data[0]['id']
-                logger.info(f"Created lesson with ID: {lesson_id}")
-                return lesson_id
+            if response.status_code in [200, 201]:
+                result = response.json()
+                if result:
+                    lesson_id = result[0]['id']
+                    logger.info(f"Created lesson with ID: {lesson_id}")
+                    return lesson_id
             
+            logger.error(f"Failed to create lesson: {response.status_code} - {response.text}")
             return None
             
         except Exception as e:
@@ -121,10 +87,16 @@ class SupabaseManager:
     def get_lesson_by_id(self, lesson_id: int) -> Optional[Lesson]:
         """Get lesson by ID."""
         try:
-            result = self.client.table('lessons').select('*').eq('id', lesson_id).execute()
+            response = requests.get(
+                f"{self.base_url}/lessons?id=eq.{lesson_id}",
+                headers=self.headers,
+                timeout=10
+            )
             
-            if result.data:
-                return self._row_to_lesson(result.data[0])
+            if response.status_code == 200:
+                data = response.json()
+                if data:
+                    return self._row_to_lesson(data[0])
             
             return None
             
@@ -135,9 +107,18 @@ class SupabaseManager:
     def get_all_lessons(self) -> List[Lesson]:
         """Get all lessons."""
         try:
-            result = self.client.table('lessons').select('*').order('created_at').execute()
+            response = requests.get(
+                f"{self.base_url}/lessons?order=created_at",
+                headers=self.headers,
+                timeout=10
+            )
             
-            return [self._row_to_lesson(row) for row in result.data]
+            if response.status_code == 200:
+                data = response.json()
+                return [self._row_to_lesson(row) for row in data]
+            
+            logger.error(f"Failed to get lessons: {response.status_code}")
+            return []
             
         except Exception as e:
             logger.error(f"Failed to get all lessons: {e}")
@@ -146,9 +127,17 @@ class SupabaseManager:
     def get_lessons_by_category(self, category: str) -> List[Lesson]:
         """Get lessons by category."""
         try:
-            result = self.client.table('lessons').select('*').eq('category', category).execute()
+            response = requests.get(
+                f"{self.base_url}/lessons?category=eq.{category}",
+                headers=self.headers,
+                timeout=10
+            )
             
-            return [self._row_to_lesson(row) for row in result.data]
+            if response.status_code == 200:
+                data = response.json()
+                return [self._row_to_lesson(row) for row in data]
+            
+            return []
             
         except Exception as e:
             logger.error(f"Failed to get lessons by category {category}: {e}")
@@ -158,20 +147,31 @@ class SupabaseManager:
         """Update lesson usage statistics."""
         try:
             # Get current usage count
-            result = self.client.table('lessons').select('usage_count').eq('id', lesson_id).execute()
+            response = requests.get(
+                f"{self.base_url}/lessons?id=eq.{lesson_id}&select=usage_count",
+                headers=self.headers,
+                timeout=10
+            )
             
-            if not result.data:
+            if response.status_code != 200 or not response.json():
                 return False
             
-            current_count = result.data[0].get('usage_count', 0)
+            current_count = response.json()[0].get('usage_count', 0)
             
             # Update usage
-            update_result = self.client.table('lessons').update({
+            update_data = {
                 'usage_count': current_count + 1,
                 'last_used': datetime.utcnow().isoformat()
-            }).eq('id', lesson_id).execute()
+            }
             
-            return len(update_result.data) > 0
+            update_response = requests.patch(
+                f"{self.base_url}/lessons?id=eq.{lesson_id}",
+                headers=self.headers,
+                json=update_data,
+                timeout=10
+            )
+            
+            return update_response.status_code in [200, 204]
             
         except Exception as e:
             logger.error(f"Failed to update lesson usage for {lesson_id}: {e}")
@@ -203,9 +203,14 @@ class SupabaseManager:
                 'posted_at': datetime.utcnow().isoformat()
             }
             
-            result = self.client.table('posting_history').insert(posting_data).execute()
+            response = requests.post(
+                f"{self.base_url}/posting_history",
+                headers=self.headers,
+                json=posting_data,
+                timeout=10
+            )
             
-            return len(result.data) > 0
+            return response.status_code in [200, 201]
             
         except Exception as e:
             logger.error(f"Failed to record posting: {e}")
@@ -214,25 +219,20 @@ class SupabaseManager:
     def get_posting_history(self, limit: int = 100) -> List[Dict[str, Any]]:
         """Get posting history."""
         try:
-            result = self.client.table('posting_history').select('*').order('posted_at', desc=True).limit(limit).execute()
+            response = requests.get(
+                f"{self.base_url}/posting_history?order=posted_at.desc&limit={limit}",
+                headers=self.headers,
+                timeout=10
+            )
             
-            return result.data
+            if response.status_code == 200:
+                return response.json()
+            
+            return []
             
         except Exception as e:
             logger.error(f"Failed to get posting history: {e}")
             return []
-    
-    def test_connection(self) -> bool:
-        """Test database connection."""
-        try:
-            # Try to select from lessons table
-            result = self.client.table('lessons').select('id').limit(1).execute()
-            logger.info("Supabase connection test successful")
-            return True
-            
-        except Exception as e:
-            logger.error(f"Supabase connection test failed: {e}")
-            return False
 
 
 # Convenience function
