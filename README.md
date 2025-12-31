@@ -41,17 +41,6 @@ python -m src.load_lessons
 python -m src.main
 ```
 
-## 📋 Configuration
-
-### Required Environment Variables
-- `BOT_TOKEN` - Your Telegram bot token from @BotFather
-- `CHANNEL_ID` - Target channel/chat ID (e.g., @mychannel or -1001234567890)
-
-### Optional Configuration
-- `POSTING_TIME` - Daily posting time (default: 09:00)
-- `TIMEZONE` - Timezone for scheduling (default: UTC)
-- `ENABLE_QUIZZES` - Enable quiz generation (default: true)
-- `QUIZ_DELAY_MINUTES` - Minutes between lesson and quiz (default: 5)
 
 ## 🗄️ Database Options
 
