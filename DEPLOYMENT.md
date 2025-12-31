@@ -90,18 +90,26 @@ cp .env.example .env
 1. **Prerequisites**
    - Render account
    - GitHub repository connected to Render
+   - Supabase database configured
 
 2. **Deploy Steps**
    - Connect your GitHub repository to Render
    - Render will automatically detect `render.yaml`
    - Set environment variables in Render dashboard:
-     - `TELEGRAM_BOT_TOKEN`
-     - `TELEGRAM_CHANNEL_ID`
+     - `BOT_TOKEN`: Your Telegram bot token
+     - `CHANNEL_ID`: Your Telegram channel ID
+     - `DATABASE_TYPE`: Set to `supabase`
+     - `SUPABASE_URL`: Your Supabase project URL
+     - `SUPABASE_ANON_KEY`: Your Supabase anon key
 
 3. **Configuration**
    - Uses web service type for persistent running
-   - 1GB disk storage for database
+   - No disk storage needed (uses Supabase)
    - Auto-deploy on git push
+   - Free tier: 750 hours/month (24/7 operation)
+
+4. **Detailed Guide**
+   - See `RENDER_DEPLOYMENT.md` for complete step-by-step instructions
 
 ### 3. Fly.io Deployment
 

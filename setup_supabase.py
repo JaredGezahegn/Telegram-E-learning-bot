@@ -5,9 +5,25 @@ import os
 import sys
 import json
 from datetime import datetime
+from pathlib import Path
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+
+# Load environment variables from .env file
+def load_env_file():
+    """Load environment variables from .env file."""
+    env_path = Path(__file__).parent / '.env'
+    if env_path.exists():
+        with open(env_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    os.environ[key] = value
+
+# Load .env file
+load_env_file()
 
 
 def create_supabase_tables_sql():
