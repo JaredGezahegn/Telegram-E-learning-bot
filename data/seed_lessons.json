@@ -1,0 +1,412 @@
+{
+  "lessons": [
+    {
+      "title": "Present Perfect vs Simple Past",
+      "content": "🎯 **Grammar Lesson: Present Perfect vs Simple Past**\n\n📝 **Rule**: Use Present Perfect for actions with connection to now\n\n✅ **Correct**: I have lived here for 5 years\n❌ **Wrong**: I lived here for 5 years (still living)\n\n💡 **Tip**: Look for time markers like 'for', 'since', 'already'",
+      "category": "grammar",
+      "difficulty": "intermediate",
+      "tags": ["present_perfect", "past_tense", "time_expressions"],
+      "source": "manual"
+    },
+    {
+      "title": "Articles: A, An, The",
+      "content": "📚 **Grammar Lesson: Articles**\n\n🔹 **A/An**: Use with singular countable nouns (first mention)\n🔹 **The**: Use with specific nouns (already mentioned)\n\n✅ **Examples**:\n• I saw *a* dog. *The* dog was friendly.\n• She's *an* engineer at *the* company.\n\n❌ **Common Error**: \"I work in *the* marketing\" → \"I work in marketing\"",
+      "category": "grammar",
+      "difficulty": "beginner",
+      "tags": ["articles", "determiners", "countable_nouns"],
+      "source": "manual"
+    },
+    {
+      "title": "Conditional Sentences - Type 1",
+      "content": "🎯 **Grammar Lesson: First Conditional**\n\n📝 **Structure**: If + present simple, will + base verb\n\n✅ **Examples**:\n• If it rains, I will stay home.\n• If you study hard, you will pass the exam.\n\n💡 **Use**: Real possibilities in the future\n\n⚠️ **Note**: Don't use 'will' in the if-clause!",
+      "category": "grammar",
+      "difficulty": "intermediate",
+      "tags": ["conditionals", "future", "if_clauses"],
+      "source": "manual"
+    },
+    {
+      "title": "Prepositions of Time",
+      "content": "⏰ **Grammar Lesson: Prepositions of Time**\n\n🔹 **IN**: months, years, seasons, parts of day\n• *in* January, *in* 2024, *in* winter, *in* the morning\n\n🔹 **ON**: days, dates\n• *on* Monday, *on* March 15th, *on* Christmas Day\n\n🔹 **AT**: specific times, night\n• *at* 3 o'clock, *at* midnight, *at* night",
+      "category": "grammar",
+      "difficulty": "beginner",
+      "tags": ["prepositions", "time", "in_on_at"],
+      "source": "manual"
+    },
+    {
+      "title": "Past Continuous vs Simple Past",
+      "content": "🎯 **Grammar Lesson: Past Continuous vs Simple Past**\n\n📝 **Past Continuous**: was/were + -ing (ongoing action)\n📝 **Simple Past**: completed action\n\n✅ **Example**: I *was reading* when the phone *rang*.\n\n💡 **Use Past Continuous for**:\n• Background actions\n• Interrupted actions\n• Two simultaneous actions",
+      "category": "grammar",
+      "difficulty": "intermediate",
+      "tags": ["past_continuous", "simple_past", "interrupted_actions"],
+      "source": "manual"
+    },
+    {
+      "title": "Modal Verbs: Can, Could, May, Might",
+      "content": "🎯 **Grammar Lesson: Modal Verbs for Possibility**\n\n🔹 **Can**: present ability/possibility\n• I *can* swim. / It *can* rain today.\n\n🔹 **Could**: past ability/polite requests\n• I *could* swim when I was 5. / *Could* you help me?\n\n🔹 **May/Might**: formal possibility\n• It *may/might* rain tomorrow.",
+      "category": "grammar",
+      "difficulty": "intermediate",
+      "tags": ["modal_verbs", "possibility", "ability", "requests"],
+      "source": "manual"
+    },
+    {
+      "title": "Comparative and Superlative Adjectives",
+      "content": "📊 **Grammar Lesson: Comparing Things**\n\n🔹 **Short adjectives**: add -er/-est\n• tall → taller → tallest\n• big → bigger → biggest\n\n🔹 **Long adjectives**: more/most + adjective\n• beautiful → more beautiful → most beautiful\n\n🔹 **Irregular**: good → better → best / bad → worse → worst",
+      "category": "grammar",
+      "difficulty": "beginner",
+      "tags": ["comparatives", "superlatives", "adjectives"],
+      "source": "manual"
+    },
+    {
+      "title": "Subject-Verb Agreement",
+      "content": "🎯 **Grammar Lesson: Subject-Verb Agreement**\n\n📝 **Rule**: Singular subjects take singular verbs\n\n✅ **Correct**:\n• The book *is* on the table.\n• Everyone *has* a ticket.\n• Neither option *seems* good.\n\n❌ **Wrong**:\n• The book *are* on the table.\n• Everyone *have* a ticket.",
+      "category": "grammar",
+      "difficulty": "intermediate",
+      "tags": ["subject_verb_agreement", "singular_plural", "everyone"],
+      "source": "manual"
+    },
+    {
+      "title": "Question Formation",
+      "content": "❓ **Grammar Lesson: Forming Questions**\n\n🔹 **Yes/No Questions**: Auxiliary + subject + main verb\n• *Do* you like coffee?\n• *Are* you coming?\n\n🔹 **Wh-Questions**: Wh-word + auxiliary + subject + main verb\n• *What do* you want?\n• *Where are* you going?\n\n💡 **Remember**: Use auxiliary verbs (do, does, did, are, is, etc.)",
+      "category": "grammar",
+      "difficulty": "beginner",
+      "tags": ["questions", "auxiliary_verbs", "wh_questions"],
+      "source": "manual"
+    },
+    {
+      "title": "Passive Voice - Present and Past",
+      "content": "🎯 **Grammar Lesson: Passive Voice**\n\n📝 **Structure**: be + past participle\n\n🔹 **Present**: am/is/are + past participle\n• The house *is built* by workers.\n\n🔹 **Past**: was/were + past participle\n• The house *was built* last year.\n\n💡 **Use**: When the action is more important than who does it",
+      "category": "grammar",
+      "difficulty": "advanced",
+      "tags": ["passive_voice", "past_participle", "be_verb"],
+      "source": "manual"
+    },
+    {
+      "title": "Gerunds vs Infinitives",
+      "content": "🎯 **Grammar Lesson: Gerunds vs Infinitives**\n\n🔹 **Gerund (-ing)**: after certain verbs\n• I *enjoy reading*. / *Avoid making* mistakes.\n\n🔹 **Infinitive (to + verb)**: after certain verbs\n• I *want to learn*. / *Remember to call* me.\n\n💡 **Some verbs change meaning**: stop, remember, forget",
+      "category": "grammar",
+      "difficulty": "advanced",
+      "tags": ["gerunds", "infinitives", "verb_patterns"],
+      "source": "manual"
+    },
+    {
+      "title": "Reported Speech - Statements",
+      "content": "🗣️ **Grammar Lesson: Reported Speech**\n\n📝 **Direct**: \"I am tired,\" she said.\n📝 **Reported**: She said (that) she was tired.\n\n🔄 **Tense Changes**:\n• Present → Past\n• Past → Past Perfect\n• Will → Would\n\n💡 **Time expressions change**: today → that day, tomorrow → the next day",
+      "category": "grammar",
+      "difficulty": "advanced",
+      "tags": ["reported_speech", "tense_changes", "backshift"],
+      "source": "manual"
+    },
+    {
+      "title": "Future Forms: Will vs Going to",
+      "content": "🔮 **Grammar Lesson: Future Forms**\n\n🔹 **Will**: spontaneous decisions, predictions, promises\n• I *will help* you. (decision made now)\n• It *will rain* tomorrow. (prediction)\n\n🔹 **Going to**: planned actions, predictions with evidence\n• I *am going to study* tonight. (planned)\n• Look at those clouds! It *is going to rain*. (evidence)",
+      "category": "grammar",
+      "difficulty": "intermediate",
+      "tags": ["future_forms", "will", "going_to", "predictions"],
+      "source": "manual"
+    },
+    {
+      "title": "Relative Clauses - Who, Which, That",
+      "content": "🔗 **Grammar Lesson: Relative Clauses**\n\n🔹 **Who**: for people\n• The man *who lives* next door is a doctor.\n\n🔹 **Which**: for things (non-defining)\n• My car, *which is red*, is very fast.\n\n🔹 **That**: for people or things (defining)\n• The book *that you gave* me is interesting.",
+      "category": "grammar",
+      "difficulty": "advanced",
+      "tags": ["relative_clauses", "who_which_that", "defining_clauses"],
+      "source": "manual"
+    },
+    {
+      "title": "Present Perfect Continuous",
+      "content": "⏳ **Grammar Lesson: Present Perfect Continuous**\n\n📝 **Structure**: have/has + been + -ing\n\n💡 **Use**: Actions that started in the past and continue now\n\n✅ **Examples**:\n• I *have been studying* English for 3 years.\n• She *has been working* here since 2020.\n\n🔄 **vs Present Perfect**: emphasizes duration and continuity",
+      "category": "grammar",
+      "difficulty": "advanced",
+      "tags": ["present_perfect_continuous", "duration", "for_since"],
+      "source": "manual"
+    },
+    {
+      "title": "Used to vs Would",
+      "content": "🕰️ **Grammar Lesson: Past Habits**\n\n🔹 **Used to**: past habits/states (now finished)\n• I *used to smoke*. (but I don't now)\n• There *used to be* a shop here.\n\n🔹 **Would**: repeated past actions (not states)\n• Every summer, we *would visit* grandma.\n\n❌ **Wrong**: I would live in Paris. ✅ **Correct**: I used to live in Paris.",
+      "category": "grammar",
+      "difficulty": "advanced",
+      "tags": ["used_to", "would", "past_habits", "past_states"],
+      "source": "manual"
+    },
+    {
+      "title": "Quantifiers: Much, Many, Few, Little",
+      "content": "📊 **Grammar Lesson: Quantifiers**\n\n🔹 **Much/Little**: uncountable nouns\n• *much* water, *little* time\n\n🔹 **Many/Few**: countable nouns\n• *many* books, *few* people\n\n🔹 **A few/A little**: positive meaning (some)\n🔹 **Few/Little**: negative meaning (not much/many)\n\n💡 **Questions**: How *much* money? How *many* cars?",
+      "category": "grammar",
+      "difficulty": "intermediate",
+      "tags": ["quantifiers", "countable_uncountable", "much_many", "few_little"],
+      "source": "manual"
+    },
+    {
+      "title": "Zero and Second Conditionals",
+      "content": "🎯 **Grammar Lesson: Zero & Second Conditionals**\n\n🔹 **Zero Conditional**: If + present, present (general truths)\n• If you heat water, it boils.\n\n🔹 **Second Conditional**: If + past, would + base verb (unreal situations)\n• If I won the lottery, I would travel the world.\n\n💡 **Zero**: facts, **Second**: imagination/unlikely situations",
+      "category": "grammar",
+      "difficulty": "intermediate",
+      "tags": ["conditionals", "zero_conditional", "second_conditional", "unreal"],
+      "source": "manual"
+    },
+    {
+      "title": "Phrasal Verbs - Common Ones",
+      "content": "🔄 **Grammar Lesson: Common Phrasal Verbs**\n\n🔹 **Turn on/off**: start/stop a machine\n• *Turn on* the TV. / *Turn off* the lights.\n\n🔹 **Look after**: take care of\n• Can you *look after* my cat?\n\n🔹 **Give up**: stop trying\n• Don't *give up*! Keep trying!\n\n💡 **Tip**: Learn phrasal verbs in context, not just meanings",
+      "category": "grammar",
+      "difficulty": "intermediate",
+      "tags": ["phrasal_verbs", "turn_on_off", "look_after", "give_up"],
+      "source": "manual"
+    },
+    {
+      "title": "Adjective Order",
+      "content": "📝 **Grammar Lesson: Adjective Order**\n\n📊 **Order**: Opinion → Size → Age → Shape → Color → Origin → Material → Purpose\n\n✅ **Correct**: A beautiful small old round red Chinese wooden dining table\n\n💡 **Common patterns**:\n• A *nice big* house (opinion + size)\n• A *young Italian* man (age + origin)\n• *Long black* hair (size + color)",
+      "category": "grammar",
+      "difficulty": "advanced",
+      "tags": ["adjective_order", "opinion_size_age", "descriptive_adjectives"],
+      "source": "manual"
+    },
+    {
+      "title": "Business English: Meeting Vocabulary",
+      "content": "💼 **Vocabulary Lesson: Meeting Terms**\n\n🔹 **Agenda**: list of topics to discuss\n• \"Let's review the agenda.\"\n\n🔹 **Minutes**: written record of meeting\n• \"Who will take the minutes?\"\n\n🔹 **Action items**: tasks to complete\n• \"Let's assign action items.\"\n\n🔹 **Follow up**: contact again later\n• \"I'll follow up next week.\"",
+      "category": "vocabulary",
+      "difficulty": "intermediate",
+      "tags": ["business_english", "meetings", "workplace", "professional"],
+      "source": "manual"
+    },
+    {
+      "title": "Food and Cooking Vocabulary",
+      "content": "🍳 **Vocabulary Lesson: Cooking Methods**\n\n🔹 **Boil**: cook in hot water\n• *Boil* the pasta for 10 minutes.\n\n🔹 **Fry**: cook in oil/fat\n• *Fry* the onions until golden.\n\n🔹 **Bake**: cook in oven\n• *Bake* the cake at 180°C.\n\n🔹 **Grill**: cook over direct heat\n• *Grill* the meat for 5 minutes each side.",
+      "category": "vocabulary",
+      "difficulty": "beginner",
+      "tags": ["food", "cooking", "kitchen", "verbs"],
+      "source": "manual"
+    },
+    {
+      "title": "Weather Expressions",
+      "content": "🌤️ **Vocabulary Lesson: Weather**\n\n🔹 **It's pouring**: raining heavily\n• \"Take an umbrella, it's pouring!\"\n\n🔹 **It's drizzling**: light rain\n• \"It's just drizzling, no need for a coat.\"\n\n🔹 **It's scorching**: very hot\n• \"It's scorching today, let's stay inside.\"\n\n🔹 **It's freezing**: very cold\n• \"It's freezing! Turn on the heater.\"",
+      "category": "vocabulary",
+      "difficulty": "intermediate",
+      "tags": ["weather", "expressions", "temperature", "rain"],
+      "source": "manual"
+    },
+    {
+      "title": "Emotions and Feelings",
+      "content": "😊 **Vocabulary Lesson: Emotions**\n\n🔹 **Thrilled**: extremely happy\n• \"I'm thrilled about the promotion!\"\n\n🔹 **Devastated**: extremely sad\n• \"She was devastated by the news.\"\n\n🔹 **Anxious**: worried/nervous\n• \"I'm anxious about the exam.\"\n\n🔹 **Content**: satisfied/peaceful\n• \"I'm content with my life.\"",
+      "category": "vocabulary",
+      "difficulty": "intermediate",
+      "tags": ["emotions", "feelings", "adjectives", "personality"],
+      "source": "manual"
+    },
+    {
+      "title": "Travel Vocabulary",
+      "content": "✈️ **Vocabulary Lesson: Travel Terms**\n\n🔹 **Boarding pass**: ticket to get on plane\n• \"Show your boarding pass at the gate.\"\n\n🔹 **Layover**: stop between flights\n• \"I have a 3-hour layover in Paris.\"\n\n🔹 **Jet lag**: tiredness from time zone changes\n• \"I'm suffering from jet lag.\"\n\n🔹 **Itinerary**: travel plan\n• \"Send me your itinerary.\"",
+      "category": "vocabulary",
+      "difficulty": "intermediate",
+      "tags": ["travel", "airport", "vacation", "transportation"],
+      "source": "manual"
+    },
+    {
+      "title": "Technology Vocabulary",
+      "content": "💻 **Vocabulary Lesson: Technology**\n\n🔹 **Download**: get files from internet\n• \"Download the app from the store.\"\n\n🔹 **Upload**: send files to internet\n• \"Upload your photos to the cloud.\"\n\n🔹 **Streaming**: watching/listening online\n• \"I'm streaming a movie tonight.\"\n\n🔹 **Backup**: copy of important data\n• \"Always backup your files.\"",
+      "category": "vocabulary",
+      "difficulty": "beginner",
+      "tags": ["technology", "internet", "computers", "digital"],
+      "source": "manual"
+    },
+    {
+      "title": "Health and Medicine",
+      "content": "🏥 **Vocabulary Lesson: Health Terms**\n\n🔹 **Symptoms**: signs of illness\n• \"What are your symptoms?\"\n\n🔹 **Prescription**: doctor's medicine order\n• \"Take this prescription to the pharmacy.\"\n\n🔹 **Check-up**: routine medical examination\n• \"I have a check-up next week.\"\n\n🔹 **Recovery**: getting better\n• \"She's making a good recovery.\"",
+      "category": "vocabulary",
+      "difficulty": "intermediate",
+      "tags": ["health", "medicine", "doctor", "illness"],
+      "source": "manual"
+    },
+    {
+      "title": "Money and Banking",
+      "content": "💰 **Vocabulary Lesson: Financial Terms**\n\n🔹 **Withdraw**: take money from account\n• \"I need to withdraw some cash.\"\n\n🔹 **Deposit**: put money into account\n• \"Deposit this check, please.\"\n\n🔹 **Interest**: money earned on savings\n• \"This account pays 2% interest.\"\n\n🔹 **Budget**: spending plan\n• \"We need to stick to our budget.\"",
+      "category": "vocabulary",
+      "difficulty": "intermediate",
+      "tags": ["money", "banking", "finance", "savings"],
+      "source": "manual"
+    },
+    {
+      "title": "House and Home",
+      "content": "🏠 **Vocabulary Lesson: Home Vocabulary**\n\n🔹 **Mortgage**: loan to buy house\n• \"We got a 30-year mortgage.\"\n\n🔹 **Utilities**: gas, water, electricity\n• \"Utilities are included in the rent.\"\n\n🔹 **Landlord**: person who owns rental property\n• \"Call the landlord about the leak.\"\n\n🔹 **Lease**: rental agreement\n• \"Sign the lease for one year.\"",
+      "category": "vocabulary",
+      "difficulty": "intermediate",
+      "tags": ["housing", "rent", "property", "home"],
+      "source": "manual"
+    },
+    {
+      "title": "Education Vocabulary",
+      "content": "🎓 **Vocabulary Lesson: Education Terms**\n\n🔹 **Curriculum**: course of study\n• \"The curriculum includes math and science.\"\n\n🔹 **Tuition**: cost of education\n• \"University tuition is expensive.\"\n\n🔹 **Scholarship**: money for good students\n• \"She won a scholarship to Harvard.\"\n\n🔹 **Graduate**: complete studies\n• \"I will graduate next year.\"",
+      "category": "vocabulary",
+      "difficulty": "intermediate",
+      "tags": ["education", "school", "university", "learning"],
+      "source": "manual"
+    },
+    {
+      "title": "Job Interview Vocabulary",
+      "content": "👔 **Vocabulary Lesson: Job Interviews**\n\n🔹 **Resume/CV**: document with work history\n• \"Send your resume with the application.\"\n\n🔹 **Qualifications**: skills and education\n• \"Do you have the right qualifications?\"\n\n🔹 **References**: people who recommend you\n• \"Provide three professional references.\"\n\n🔹 **Benefits**: extra things from job (insurance, etc.)\n• \"The job has good benefits.\"",
+      "category": "vocabulary",
+      "difficulty": "intermediate",
+      "tags": ["job_interview", "employment", "career", "workplace"],
+      "source": "manual"
+    },
+    {
+      "title": "Shopping Vocabulary",
+      "content": "🛍️ **Vocabulary Lesson: Shopping Terms**\n\n🔹 **Receipt**: proof of purchase\n• \"Keep your receipt for returns.\"\n\n🔹 **Discount**: reduced price\n• \"There's a 20% discount today.\"\n\n🔹 **Refund**: money back\n• \"Can I get a refund for this?\"\n\n🔹 **Sale**: special low prices\n• \"Everything is on sale this week.\"",
+      "category": "vocabulary",
+      "difficulty": "beginner",
+      "tags": ["shopping", "retail", "money", "purchases"],
+      "source": "manual"
+    },
+    {
+      "title": "Sports and Exercise",
+      "content": "⚽ **Vocabulary Lesson: Sports Terms**\n\n🔹 **Workout**: exercise session\n• \"I had a great workout at the gym.\"\n\n🔹 **Coach**: person who trains athletes\n• \"Our coach is very experienced.\"\n\n🔹 **Tournament**: sports competition\n• \"The tennis tournament starts Monday.\"\n\n🔹 **Referee**: person who enforces rules\n• \"The referee made a bad call.\"",
+      "category": "vocabulary",
+      "difficulty": "beginner",
+      "tags": ["sports", "exercise", "fitness", "competition"],
+      "source": "manual"
+    },
+    {
+      "title": "Entertainment Vocabulary",
+      "content": "🎬 **Vocabulary Lesson: Entertainment**\n\n🔹 **Box office**: place to buy tickets\n• \"Buy tickets at the box office.\"\n\n🔹 **Premiere**: first showing of movie\n• \"The movie premiere is tonight.\"\n\n🔹 **Encore**: extra performance\n• \"The audience demanded an encore.\"\n\n🔹 **Intermission**: break during show\n• \"There's a 15-minute intermission.\"",
+      "category": "vocabulary",
+      "difficulty": "intermediate",
+      "tags": ["entertainment", "movies", "theater", "shows"],
+      "source": "manual"
+    },
+    {
+      "title": "Nature and Environment",
+      "content": "🌱 **Vocabulary Lesson: Environment**\n\n🔹 **Sustainable**: environmentally friendly\n• \"We need sustainable energy sources.\"\n\n🔹 **Renewable**: can be used again\n• \"Solar power is renewable energy.\"\n\n🔹 **Pollution**: harmful substances in environment\n• \"Air pollution is a serious problem.\"\n\n🔹 **Conservation**: protecting nature\n• \"Wildlife conservation is important.\"",
+      "category": "vocabulary",
+      "difficulty": "advanced",
+      "tags": ["environment", "nature", "sustainability", "ecology"],
+      "source": "manual"
+    },
+    {
+      "title": "Personality Traits",
+      "content": "👤 **Vocabulary Lesson: Personality**\n\n🔹 **Outgoing**: friendly and social\n• \"She's very outgoing and makes friends easily.\"\n\n🔹 **Reliable**: can be trusted\n• \"He's reliable - always on time.\"\n\n🔹 **Ambitious**: wants to succeed\n• \"She's ambitious and works hard.\"\n\n🔹 **Laid-back**: relaxed and calm\n• \"He's very laid-back about everything.\"",
+      "category": "vocabulary",
+      "difficulty": "intermediate",
+      "tags": ["personality", "character", "traits", "adjectives"],
+      "source": "manual"
+    },
+    {
+      "title": "Time Expressions",
+      "content": "⏰ **Vocabulary Lesson: Time Expressions**\n\n🔹 **Eventually**: after a long time\n• \"Eventually, he learned to drive.\"\n\n🔹 **Meanwhile**: at the same time\n• \"I'll cook dinner. Meanwhile, you set the table.\"\n\n🔹 **Immediately**: right now\n• \"Call the doctor immediately!\"\n\n🔹 **Gradually**: slowly over time\n• \"The weather is gradually getting warmer.\"",
+      "category": "vocabulary",
+      "difficulty": "intermediate",
+      "tags": ["time", "adverbs", "sequence", "timing"],
+      "source": "manual"
+    },
+    {
+      "title": "Academic Vocabulary",
+      "content": "📚 **Vocabulary Lesson: Academic Terms**\n\n🔹 **Analyze**: examine carefully\n• \"Analyze the data before drawing conclusions.\"\n\n🔹 **Hypothesis**: educated guess\n• \"Our hypothesis was proven correct.\"\n\n🔹 **Methodology**: way of doing research\n• \"Explain your research methodology.\"\n\n🔹 **Conclusion**: final result or decision\n• \"What's your conclusion about this study?\"",
+      "category": "vocabulary",
+      "difficulty": "advanced",
+      "tags": ["academic", "research", "study", "formal"],
+      "source": "manual"
+    },
+    {
+      "title": "Common Mistake: Its vs It's",
+      "content": "❌ **Common Mistake: Its vs It's**\n\n🔹 **Its**: possessive (belonging to it)\n• The dog wagged *its* tail.\n• The company changed *its* policy.\n\n🔹 **It's**: contraction (it is/it has)\n• *It's* raining outside. (It is raining)\n• *It's* been a long day. (It has been)\n\n💡 **Tip**: If you can say \"it is\" or \"it has,\" use \"it's\"",
+      "category": "common_mistakes",
+      "difficulty": "beginner",
+      "tags": ["its_its", "possessive", "contractions", "apostrophes"],
+      "source": "manual"
+    },
+    {
+      "title": "Common Mistake: Your vs You're",
+      "content": "❌ **Common Mistake: Your vs You're**\n\n🔹 **Your**: possessive (belonging to you)\n• *Your* car is in the parking lot.\n• What's *your* name?\n\n🔹 **You're**: contraction (you are)\n• *You're* late for the meeting. (You are late)\n• *You're* doing great! (You are doing)\n\n💡 **Tip**: If you can say \"you are,\" use \"you're\"",
+      "category": "common_mistakes",
+      "difficulty": "beginner",
+      "tags": ["your_youre", "possessive", "contractions", "apostrophes"],
+      "source": "manual"
+    },
+    {
+      "title": "Common Mistake: There, Their, They're",
+      "content": "❌ **Common Mistake: There, Their, They're**\n\n🔹 **There**: place or existence\n• The book is over *there*.\n• *There* are many people here.\n\n🔹 **Their**: possessive (belonging to them)\n• *Their* house is beautiful.\n\n🔹 **They're**: contraction (they are)\n• *They're* coming to dinner. (They are coming)\n\n💡 **Memory trick**: *There* has \"here\" in it (place)",
+      "category": "common_mistakes",
+      "difficulty": "beginner",
+      "tags": ["there_their_theyre", "homophones", "possessive", "contractions"],
+      "source": "manual"
+    },
+    {
+      "title": "Common Mistake: Affect vs Effect",
+      "content": "❌ **Common Mistake: Affect vs Effect**\n\n🔹 **Affect**: verb (to influence)\n• The rain will *affect* our picnic plans.\n• How did the medicine *affect* you?\n\n🔹 **Effect**: noun (result)\n• The *effect* of the rain was a cancelled picnic.\n• What was the *effect* of the medicine?\n\n💡 **Memory trick**: **A**ffect = **A**ction (verb), **E**ffect = **E**nd result (noun)",
+      "category": "common_mistakes",
+      "difficulty": "intermediate",
+      "tags": ["affect_effect", "verb_noun", "influence", "result"],
+      "source": "manual"
+    },
+    {
+      "title": "Common Mistake: Then vs Than",
+      "content": "❌ **Common Mistake: Then vs Than**\n\n🔹 **Then**: time (next, after that)\n• First we'll eat, *then* we'll watch a movie.\n• I was younger *then*.\n\n🔹 **Than**: comparison\n• She's taller *than* her brother.\n• I like coffee more *than* tea.\n\n💡 **Memory trick**: *Then* = time, *Than* = comparison",
+      "category": "common_mistakes",
+      "difficulty": "beginner",
+      "tags": ["then_than", "time", "comparison", "sequence"],
+      "source": "manual"
+    },
+    {
+      "title": "Common Mistake: Lose vs Loose",
+      "content": "❌ **Common Mistake: Lose vs Loose**\n\n🔹 **Lose**: verb (to misplace or not win)\n• Don't *lose* your keys!\n• Our team might *lose* the game.\n\n🔹 **Loose**: adjective (not tight)\n• These pants are too *loose*.\n• The screw is *loose*.\n\n💡 **Memory trick**: *Loose* has two O's like \"too big\"",
+      "category": "common_mistakes",
+      "difficulty": "beginner",
+      "tags": ["lose_loose", "verb_adjective", "spelling", "pronunciation"],
+      "source": "manual"
+    },
+    {
+      "title": "Common Mistake: Who vs Whom",
+      "content": "❌ **Common Mistake: Who vs Whom**\n\n🔹 **Who**: subject (does the action)\n• *Who* is calling? (He is calling)\n• *Who* ate my sandwich?\n\n🔹 **Whom**: object (receives the action)\n• To *whom* are you speaking? (You are speaking to him)\n• *Whom* did you see?\n\n💡 **Trick**: If you can answer with \"he,\" use \"who.\" If \"him,\" use \"whom.\"",
+      "category": "common_mistakes",
+      "difficulty": "advanced",
+      "tags": ["who_whom", "subject_object", "formal_grammar", "pronouns"],
+      "source": "manual"
+    },
+    {
+      "title": "Common Mistake: Less vs Fewer",
+      "content": "❌ **Common Mistake: Less vs Fewer**\n\n🔹 **Less**: uncountable nouns\n• *Less* water, *less* time, *less* money\n• I have *less* experience than you.\n\n🔹 **Fewer**: countable nouns\n• *Fewer* books, *fewer* people, *fewer* cars\n• There are *fewer* students today.\n\n💡 **Rule**: If you can count it individually, use \"fewer\"",
+      "category": "common_mistakes",
+      "difficulty": "intermediate",
+      "tags": ["less_fewer", "countable_uncountable", "quantifiers", "grammar"],
+      "source": "manual"
+    },
+    {
+      "title": "Common Mistake: I vs Me",
+      "content": "❌ **Common Mistake: I vs Me**\n\n🔹 **I**: subject (does the action)\n• *I* am going to the store.\n• John and *I* are friends.\n\n🔹 **Me**: object (receives the action)\n• Give the book to *me*.\n• Between you and *me*, this is secret.\n\n💡 **Trick**: Remove the other person. \"Give the book to I\" sounds wrong!",
+      "category": "common_mistakes",
+      "difficulty": "beginner",
+      "tags": ["I_me", "subject_object", "pronouns", "prepositions"],
+      "source": "manual"
+    },
+    {
+      "title": "Common Mistake: Could of vs Could have",
+      "content": "❌ **Common Mistake: Could of vs Could have**\n\n❌ **Wrong**: I could *of* done better.\n✅ **Correct**: I could *have* done better.\n\n❌ **Wrong**: She would *of* called.\n✅ **Correct**: She would *have* called.\n\n💡 **Why this happens**: \"Could've\" sounds like \"could of\" but it's \"could have\"\n\n🔄 **Also applies to**: should have, would have, might have",
+      "category": "common_mistakes",
+      "difficulty": "intermediate",
+      "tags": ["could_have", "contractions", "modal_verbs", "pronunciation"],
+      "source": "manual"
+    },
+    {
+      "title": "Common Mistake: Everyday vs Every day",
+      "content": "❌ **Common Mistake: Everyday vs Every day**\n\n🔹 **Everyday**: adjective (ordinary, common)\n• These are my *everyday* clothes.\n• It's an *everyday* occurrence.\n\n🔹 **Every day**: adverb phrase (each day)\n• I exercise *every day*.\n• She calls her mom *every day*.\n\n💡 **Test**: Replace with \"each day.\" If it works, use \"every day\"",
+      "category": "common_mistakes",
+      "difficulty": "intermediate",
+      "tags": ["everyday_every_day", "adjective_adverb", "frequency", "spelling"],
+      "source": "manual"
+    },
+    {
+      "title": "Common Mistake: Apostrophe with Plurals",
+      "content": "❌ **Common Mistake: Apostrophes in Plurals**\n\n❌ **Wrong**: The cat's are sleeping. (plural)\n✅ **Correct**: The cats are sleeping.\n\n❌ **Wrong**: I bought three apple's.\n✅ **Correct**: I bought three apples.\n\n✅ **Apostrophes ARE used for**:\n• Possession: The cat's toy\n• Contractions: It's raining\n\n💡 **Rule**: Never use apostrophes for simple plurals!",
+      "category": "common_mistakes",
+      "difficulty": "beginner",
+      "tags": ["apostrophes", "plurals", "possessive", "punctuation"],
+      "source": "manual"
+    },
+    {
+      "title": "Common Mistake: Double Negatives",
+      "content": "❌ **Common Mistake: Double Negatives**\n\n❌ **Wrong**: I don't have no money.\n✅ **Correct**: I don't have any money. / I have no money.\n\n❌ **Wrong**: She can't find nothing.\n✅ **Correct**: She can't find anything. / She can find nothing.\n\n💡 **Rule**: Use only one negative word per clause\n\n🔄 **Change**: no → any, nothing → anything, nobody → anybody",
+      "category": "common_mistakes",
+      "difficulty": "intermediate",
+      "tags": ["double_negatives", "any_no", "grammar_rules", "negation"],
+      "source": "manual"
+    }
+  ]
+}

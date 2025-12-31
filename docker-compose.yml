@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  telegram-bot:
+    build: .
+    container_name: telegram-english-bot
+    restart: unless-stopped
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHANNEL_ID=${TELEGRAM_CHANNEL_ID}
+      - POSTING_TIME=${POSTING_TIME:-09:00}
+      - TIMEZONE=${TIMEZONE:-UTC}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - RETRY_ATTEMPTS=${RETRY_ATTEMPTS:-3}
+      - RETRY_DELAY=${RETRY_DELAY:-60}
+      - RESOURCE_CHECK_INTERVAL=${RESOURCE_CHECK_INTERVAL:-300}
+    volumes:
+      - bot_data:/app/data
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sqlite3; sqlite3.connect('lessons.db').execute('SELECT 1')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  bot_data:
+    driver: local
