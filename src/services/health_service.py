@@ -10,6 +10,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from typing import Dict, Any
 import json
 import logging
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -61,34 +62,70 @@ class HealthCheckHandler(BaseHTTPRequestHandler):
     def get_health_status(self) -> Dict[str, Any]:
         """Get current health status of the application."""
         try:
-            # Import here to avoid circular imports
-            import sys
+            # Simple approach - try Supabase first, fallback to SQLite
             import os
-            sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+            import requests
             
-            from services.database_factory import create_lesson_repository
+            # Check if we have Supabase configuration
+            supabase_url = os.getenv('SUPABASE_URL')
+            supabase_key = os.getenv('SUPABASE_ANON_KEY')
+            database_type = os.getenv('DATABASE_TYPE', 'sqlite').lower()
             
-            # Use the configured database (SQLite or Supabase)
-            repo = create_lesson_repository()
+            if database_type == 'supabase' and supabase_url and supabase_key:
+                # Test Supabase connection
+                headers = {
+                    'apikey': supabase_key,
+                    'Authorization': f'Bearer {supabase_key}',
+                    'Content-Type': 'application/json'
+                }
+                
+                response = requests.get(
+                    f"{supabase_url}/rest/v1/lessons?select=id&limit=1",
+                    headers=headers,
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    # Get lesson count
+                    count_response = requests.get(
+                        f"{supabase_url}/rest/v1/lessons?select=id",
+                        headers=headers,
+                        timeout=10
+                    )
+                    
+                    if count_response.status_code == 200:
+                        lesson_count = len(count_response.json())
+                    else:
+                        lesson_count = 0
+                    
+                    return {
+                        'healthy': True,
+                        'database': 'connected',
+                        'database_type': 'supabase',
+                        'lesson_count': lesson_count,
+                        'timestamp': time.time(),
+                        'status': 'operational'
+                    }
+                else:
+                    raise Exception(f"Supabase connection failed: {response.status_code} - {response.text}")
             
-            # Test connection and get lesson count
-            if hasattr(repo, 'get_all_lessons'):
-                lessons = repo.get_all_lessons()
-                lesson_count = len(lessons)
-                database_type = "supabase" if "Supabase" in str(type(repo)) else "sqlite"
             else:
-                # Fallback for older repository interface
-                lesson_count = 0
-                database_type = "unknown"
-            
-            return {
-                'healthy': True,
-                'database': 'connected',
-                'database_type': database_type,
-                'lesson_count': lesson_count,
-                'timestamp': time.time(),
-                'status': 'operational'
-            }
+                # Fallback to SQLite
+                conn = sqlite3.connect('lessons.db', timeout=5)
+                cursor = conn.cursor()
+                cursor.execute('SELECT COUNT(*) FROM lessons')
+                lesson_count = cursor.fetchone()[0]
+                conn.close()
+                
+                return {
+                    'healthy': True,
+                    'database': 'connected',
+                    'database_type': 'sqlite',
+                    'lesson_count': lesson_count,
+                    'timestamp': time.time(),
+                    'status': 'operational'
+                }
+                
         except Exception as e:
             return {
                 'healthy': False,
@@ -103,14 +140,6 @@ class HealthCheckHandler(BaseHTTPRequestHandler):
         import os
         
         try:
-            # Import here to avoid circular imports
-            import sys
-            sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-            
-            from config import get_config
-            
-            config = get_config()
-            
             return {
                 'environment_variables': {
                     'DATABASE_TYPE': os.getenv('DATABASE_TYPE'),
@@ -118,15 +147,10 @@ class HealthCheckHandler(BaseHTTPRequestHandler):
                     'SUPABASE_ANON_KEY': os.getenv('SUPABASE_ANON_KEY')[:20] + '...' if os.getenv('SUPABASE_ANON_KEY') else None,
                     'TELEGRAM_BOT_TOKEN': os.getenv('TELEGRAM_BOT_TOKEN')[:20] + '...' if os.getenv('TELEGRAM_BOT_TOKEN') else None,
                     'CHANNEL_ID': os.getenv('CHANNEL_ID'),
+                    'POSTING_TIME': os.getenv('POSTING_TIME'),
+                    'TIMEZONE': os.getenv('TIMEZONE'),
                 },
-                'config_values': {
-                    'database_type': config.database_type,
-                    'database_path': config.database_path,
-                    'supabase_url': config.supabase_url,
-                    'channel_id': config.channel_id,
-                    'posting_time': config.posting_time,
-                    'timezone': config.timezone,
-                },
+                'python_path': os.getcwd(),
                 'timestamp': time.time()
             }
         except Exception as e:
