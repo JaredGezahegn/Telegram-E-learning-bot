@@ -4,7 +4,11 @@ import asyncio
 import logging
 import sys
 import signal
+import os
 from typing import Optional
+
+# Add the parent directory to the Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.config import get_config
 from src.services.system_integration_service import (
