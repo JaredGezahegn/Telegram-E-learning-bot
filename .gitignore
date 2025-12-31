@@ -26,12 +26,12 @@ venv/
 env/
 ENV/
 
-# Environment Variables
+# Environment Variables (keep .env.example for reference)
 .env
 .env.local
 .env.production
 
-# Database
+# Database (local SQLite files - using Supabase in production)
 *.db
 *.sqlite
 *.sqlite3
@@ -68,6 +68,7 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
+pytest.ini
 
 # Temporary files
 *.tmp
@@ -84,10 +85,32 @@ explain_*.py
 clean_*.py
 load_data.py
 
+# Development tools
+Makefile
+setup.py
+
+# Alternative deployment configurations (keeping only Render)
+Dockerfile
+docker-compose.yml
+.dockerignore
+railway.toml
+fly.toml
+
+# Deployment scripts for other platforms
+scripts/deploy-docker.*
+scripts/deploy-flyio.*
+scripts/deploy-railway.*
+scripts/setup-local.*
+scripts/verify-deployment.*
+
+# Alternative documentation (keeping essential ones)
+QUICK_DEPLOY.md
+
 # Kiro IDE
 .kiro/
 
-# Deployment specific
-railway.toml
-fly.toml
-render.yaml
+# Keep these files for production:
+# - render.yaml (Render deployment config)
+# - RENDER_DEPLOYMENT.md (Render-specific guide)
+# - DEPLOYMENT.md (General deployment guide)
+# - SUPABASE_SETUP.md (Database setup guide)
