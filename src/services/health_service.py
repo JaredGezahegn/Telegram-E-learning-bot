@@ -70,7 +70,11 @@ class HealthCheckHandler(BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         """Override to reduce log noise from health checks."""
         # Only log non-health check requests
-        if '/health' not in args[0]:
+        # Check if args[0] is a string and contains '/health'
+        if args and isinstance(args[0], str) and '/health' not in args[0]:
+            super().log_message(format, *args)
+        elif args and not isinstance(args[0], str):
+            # For non-string args (like HTTPStatus), always log
             super().log_message(format, *args)
 
 
