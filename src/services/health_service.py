@@ -145,7 +145,7 @@ class HealthCheckHandler(BaseHTTPRequestHandler):
                     'DATABASE_TYPE': os.getenv('DATABASE_TYPE'),
                     'SUPABASE_URL': os.getenv('SUPABASE_URL'),
                     'SUPABASE_ANON_KEY': os.getenv('SUPABASE_ANON_KEY')[:20] + '...' if os.getenv('SUPABASE_ANON_KEY') else None,
-                    'TELEGRAM_BOT_TOKEN': os.getenv('TELEGRAM_BOT_TOKEN')[:20] + '...' if os.getenv('TELEGRAM_BOT_TOKEN') else None,
+                    'BOT_TOKEN': os.getenv('BOT_TOKEN')[:20] + '...' if os.getenv('BOT_TOKEN') else None,
                     'CHANNEL_ID': os.getenv('CHANNEL_ID'),
                     'POSTING_TIME': os.getenv('POSTING_TIME'),
                     'TIMEZONE': os.getenv('TIMEZONE'),
