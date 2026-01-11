@@ -12,10 +12,11 @@ from .monitoring_service import get_monitoring_service, setup_monitoring
 from .logging_service import get_logging_service, LogLevel, LogCategory
 from .system_status_service import get_system_status_service
 from .resource_monitor import get_resource_monitor, setup_resource_monitoring
-from .scheduler import create_scheduler_service
-from .lesson_manager import LessonManager
-from .bot_controller import create_bot_controller
-from .database_factory import create_lesson_repository
+# Dynamic imports to avoid dependency issues at module level
+# from .scheduler import create_scheduler_service
+# from .lesson_manager import LessonManager
+# from .bot_controller import create_bot_controller
+# from .database_factory import create_lesson_repository
 
 
 logger = logging.getLogger(__name__)
@@ -82,6 +83,11 @@ class SystemIntegrationService:
             self.system_status_service = get_system_status_service()
             
             # Initialize lesson management and bot controller
+            from .database_factory import create_lesson_repository
+            from .lesson_manager import LessonManager
+            from .bot_controller import create_bot_controller
+            from .scheduler import create_scheduler_service
+            
             lesson_repository = create_lesson_repository()
             self.lesson_manager = LessonManager(lesson_repository)
             
