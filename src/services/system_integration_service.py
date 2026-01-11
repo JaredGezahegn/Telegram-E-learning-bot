@@ -12,6 +12,10 @@ from .monitoring_service import get_monitoring_service, setup_monitoring
 from .logging_service import get_logging_service, LogLevel, LogCategory
 from .system_status_service import get_system_status_service
 from .resource_monitor import get_resource_monitor, setup_resource_monitoring
+from .scheduler import create_scheduler_service
+from .lesson_manager import LessonManager
+from .bot_controller import create_bot_controller
+from .database_factory import create_lesson_repository
 
 
 logger = logging.getLogger(__name__)
@@ -30,6 +34,9 @@ class SystemIntegrationService:
         self.monitoring_service = None
         self.system_status_service = None
         self.resource_monitor = None
+        self.scheduler_service = None
+        self.lesson_manager = None
+        self.bot_controller = None
         
         self._initialized = False
         self._startup_time = None
@@ -74,6 +81,24 @@ class SystemIntegrationService:
             # Initialize system status service
             self.system_status_service = get_system_status_service()
             
+            # Initialize lesson management and bot controller
+            lesson_repository = create_lesson_repository()
+            self.lesson_manager = LessonManager(lesson_repository)
+            
+            # Create bot controller
+            self.bot_controller = await create_bot_controller()
+            if not self.bot_controller:
+                logger.error("Failed to create bot controller")
+                return False
+            
+            # Create and start scheduler service
+            self.scheduler_service = await create_scheduler_service(self.lesson_manager, self.bot_controller)
+            if not self.scheduler_service:
+                logger.error("Failed to create scheduler service")
+                return False
+            
+            logger.info("Scheduler service started successfully")
+            
             # Set up resource monitor integration with resilience
             self._setup_resource_monitor_integration()
             
@@ -93,7 +118,7 @@ class SystemIntegrationService:
                 "All system services initialized successfully",
                 {
                     'startup_time': self._startup_time.isoformat(),
-                    'services': ['resource_monitor', 'resilience', 'monitoring', 'system_status'],
+                    'services': ['resource_monitor', 'resilience', 'monitoring', 'system_status', 'scheduler'],
                     'graceful_degradation_enabled': self.config.enable_graceful_degradation
                 }
             )
@@ -117,6 +142,12 @@ class SystemIntegrationService:
             logger.info("Shutting down system services...")
             
             # Shutdown in reverse order
+            if self.scheduler_service:
+                await self.scheduler_service.stop()
+            
+            if self.bot_controller:
+                await self.bot_controller.close()
+            
             if self.monitoring_service:
                 await self.monitoring_service.stop()
             
@@ -374,6 +405,10 @@ class SystemIntegrationService:
             if self.resource_monitor:
                 status['resource_monitor'] = self.resource_monitor.get_resource_status()
             
+            # Add scheduler status
+            if self.scheduler_service:
+                status['scheduler'] = self.scheduler_service.get_scheduler_status()
+            
             return status
             
         except Exception as e:
@@ -426,6 +461,17 @@ class SystemIntegrationService:
                 
                 if health.get('warnings'):
                     overall_warnings.extend([f"{service}: {warning}" for warning in health['warnings']])
+            
+            # Check scheduler health
+            if self.scheduler_service:
+                scheduler_status = self.scheduler_service.get_scheduler_status()
+                if not scheduler_status.get('running', False):
+                    overall_issues.append("Scheduler service not running")
+                health_results['scheduler'] = {
+                    'status': 'healthy' if scheduler_status.get('running', False) else 'unhealthy',
+                    'next_run_time': scheduler_status.get('next_run_time'),
+                    'posting_time': scheduler_status.get('posting_time')
+                }
             
             # Determine overall status
             if overall_issues:
