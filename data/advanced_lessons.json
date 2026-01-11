@@ -1,0 +1,164 @@
+{
+  "lessons": [
+    {
+      "title": "Perfect Continuous Tenses - Advanced Usage",
+      "content": "🎯 **Advanced Grammar: Perfect Continuous Tenses**\n\n📝 **Present Perfect Continuous**: have/has + been + -ing\n• I *have been studying* English for 3 years.\n\n📝 **Past Perfect Continuous**: had + been + -ing\n• She *had been working* there before she moved.\n\n📝 **Future Perfect Continuous**: will + have + been + -ing\n• By 2025, I *will have been living* here for 10 years.\n\n💡 **Use**: Emphasizes duration and continuity",
+      "category": "advanced_grammar",
+      "difficulty": "advanced",
+      "tags": ["perfect_continuous", "duration", "advanced_tenses"],
+      "source": "manual"
+    },
+    {
+      "title": "Subjunctive Mood - Formal English",
+      "content": "🎯 **Advanced Grammar: Subjunctive Mood**\n\n📝 **Present Subjunctive**: base form of verb\n• I suggest that he *be* more careful.\n• It's important that she *arrive* on time.\n\n📝 **Past Subjunctive**: were for all persons\n• If I *were* you, I would accept the offer.\n• I wish I *were* taller.\n\n💡 **Use**: Formal suggestions, wishes, hypothetical situations\n\n⚠️ **Note**: More common in American English",
+      "category": "advanced_grammar",
+      "difficulty": "advanced",
+      "tags": ["subjunctive", "formal_english", "hypothetical"],
+      "source": "manual"
+    },
+    {
+      "title": "Third Conditional - Unreal Past",
+      "content": "🎯 **Advanced Grammar: Third Conditional**\n\n📝 **Structure**: If + past perfect, would + have + past participle\n\n✅ **Examples**:\n• If I *had studied* harder, I *would have passed* the exam.\n• If she *had left* earlier, she *wouldn't have missed* the train.\n\n💡 **Use**: Imaginary situations in the past\n\n🔄 **Mixed Conditionals**:\n• If I *had saved* money (past), I *would be* rich now (present).",
+      "category": "advanced_grammar",
+      "difficulty": "advanced",
+      "tags": ["third_conditional", "unreal_past", "mixed_conditionals"],
+      "source": "manual"
+    },
+    {
+      "title": "Inversion in Formal English",
+      "content": "🎯 **Advanced Grammar: Inversion**\n\n📝 **After negative adverbs**: Never, rarely, seldom, hardly\n• *Never have I seen* such a beautiful sunset.\n• *Rarely does* he make mistakes.\n\n📝 **After 'only'**:\n• *Only when* you arrive *will we* start the meeting.\n• *Only by working hard* can you succeed.\n\n📝 **In conditionals**:\n• *Had I known*, I would have come earlier.\n• *Were she here*, she would help us.\n\n💡 **Use**: Formal writing and emphasis",
+      "category": "advanced_grammar",
+      "difficulty": "advanced",
+      "tags": ["inversion", "formal_english", "emphasis"],
+      "source": "manual"
+    },
+    {
+      "title": "Cleft Sentences - Emphasis Structures",
+      "content": "🎯 **Advanced Grammar: Cleft Sentences**\n\n📝 **It-cleft**: It + be + focus + that/who\n• *It was John who* called you yesterday.\n• *It's the red car that* I want to buy.\n\n📝 **Wh-cleft**: What/Where/When + clause + be + focus\n• *What I need* is a good night's sleep.\n• *Where we met* was at the coffee shop.\n\n📝 **Pseudo-cleft**: All + clause + be + to-infinitive\n• *All I want* is to be happy.\n\n💡 **Use**: Emphasizing specific information",
+      "category": "advanced_grammar",
+      "difficulty": "advanced",
+      "tags": ["cleft_sentences", "emphasis", "focus"],
+      "source": "manual"
+    },
+    {
+      "title": "Business Presentations - Opening Strong",
+      "content": "💼 **Business English: Presentation Openings**\n\n🔹 **Attention Grabbers**:\n• \"Imagine if I told you that...\"\n• \"By the end of this presentation, you'll understand...\"\n• \"What if I said we could increase profits by 30%?\"\n\n🔹 **Agenda Setting**:\n• \"Today, I'll be covering three main points...\"\n• \"First, we'll examine... Then, we'll explore... Finally...\"\n\n🔹 **Credibility Builders**:\n• \"Based on our research with 500 companies...\"\n• \"Industry data shows that...\"\n\n💡 **Tip**: Practice your opening until it's natural",
+      "category": "business_english",
+      "difficulty": "intermediate",
+      "tags": ["presentations", "opening", "business_communication"],
+      "source": "manual"
+    },
+    {
+      "title": "Negotiation Language - Key Phrases",
+      "content": "💼 **Business English: Negotiation Skills**\n\n🔹 **Making Offers**:\n• \"We're prepared to offer...\"\n• \"What if we were to suggest...\"\n• \"Would you consider...?\"\n\n🔹 **Showing Flexibility**:\n• \"We might be able to...\"\n• \"There's some room for movement on...\"\n• \"We could potentially...\"\n\n🔹 **Firm Positions**:\n• \"I'm afraid that's non-negotiable.\"\n• \"We simply cannot go below...\"\n• \"That's our final offer.\"\n\n💡 **Strategy**: Always leave room for compromise",
+      "category": "business_english",
+      "difficulty": "advanced",
+      "tags": ["negotiation", "business_communication", "diplomacy"],
+      "source": "manual"
+    },
+    {
+      "title": "Professional Email Writing",
+      "content": "💼 **Business English: Email Structure**\n\n🔹 **Subject Lines**:\n• \"Action Required: Budget Approval\"\n• \"Follow-up: Meeting Minutes from 15/01\"\n• \"Request: Extension for Project Deadline\"\n\n🔹 **Professional Openings**:\n• \"I hope this email finds you well.\"\n• \"Thank you for your prompt response.\"\n• \"I'm writing to follow up on...\"\n\n🔹 **Clear Closings**:\n• \"Please let me know if you need any clarification.\"\n• \"I look forward to your response.\"\n• \"Thank you for your time and consideration.\"\n\n💡 **Rule**: Be clear, concise, and courteous",
+      "category": "business_english",
+      "difficulty": "intermediate",
+      "tags": ["email_writing", "professional_communication", "business_correspondence"],
+      "source": "manual"
+    },
+    {
+      "title": "Academic Writing - Thesis Statements",
+      "content": "🎓 **Academic English: Thesis Statements**\n\n📝 **Strong Thesis Elements**:\n• Clear position on the topic\n• Specific and arguable claim\n• Preview of main supporting points\n\n✅ **Good Example**:\n\"Climate change requires immediate global action because it threatens food security, displaces populations, and damages economic stability.\"\n\n❌ **Weak Example**:\n\"Climate change is bad and we should do something about it.\"\n\n💡 **Formula**: Topic + Position + Supporting Points\n\n🔍 **Test**: Can someone reasonably disagree with your thesis?",
+      "category": "academic_english",
+      "difficulty": "advanced",
+      "tags": ["thesis_statements", "academic_writing", "argumentation"],
+      "source": "manual"
+    },
+    {
+      "title": "Research Vocabulary - Academic Terms",
+      "content": "🎓 **Academic English: Research Language**\n\n🔹 **Introducing Research**:\n• \"This study investigates...\"\n• \"The research examines...\"\n• \"The findings suggest that...\"\n\n🔹 **Showing Relationships**:\n• \"Furthermore,\" \"Moreover,\" \"Additionally\"\n• \"Conversely,\" \"However,\" \"Nevertheless\"\n• \"Consequently,\" \"Therefore,\" \"Thus\"\n\n🔹 **Citing Sources**:\n• \"According to Smith (2023)...\"\n• \"Research indicates that...\"\n• \"Studies have shown...\"\n\n💡 **Tip**: Vary your vocabulary to avoid repetition",
+      "category": "academic_english",
+      "difficulty": "advanced",
+      "tags": ["research_vocabulary", "academic_language", "citations"],
+      "source": "manual"
+    },
+    {
+      "title": "Formal Language Register",
+      "content": "🎓 **Academic English: Formal Register**\n\n🔹 **Formal vs Informal**:\n• Formal: \"The data indicates...\" / Informal: \"The data shows...\"\n• Formal: \"It is evident that...\" / Informal: \"It's clear that...\"\n• Formal: \"Prior to the study...\" / Informal: \"Before the study...\"\n\n🔹 **Avoiding Contractions**:\n• Write \"cannot\" not \"can't\"\n• Write \"will not\" not \"won't\"\n• Write \"it is\" not \"it's\"\n\n🔹 **Objective Language**:\n• \"The results demonstrate...\" (not \"I think the results show...\")\n\n💡 **Rule**: Remove personal opinions and casual language",
+      "category": "academic_english",
+      "difficulty": "advanced",
+      "tags": ["formal_register", "academic_style", "objectivity"],
+      "source": "manual"
+    },
+    {
+      "title": "Common Idioms - Daily Conversation",
+      "content": "💬 **Conversational English: Essential Idioms**\n\n🔹 **Time Idioms**:\n• \"Time flies\" = time passes quickly\n• \"Better late than never\" = it's good to do something even if delayed\n• \"In the nick of time\" = just in time\n\n🔹 **Money Idioms**:\n• \"Break the bank\" = very expensive\n• \"Worth every penny\" = good value for money\n• \"Penny for your thoughts\" = what are you thinking?\n\n🔹 **Weather Idioms**:\n• \"Under the weather\" = feeling sick\n• \"Break the ice\" = start a conversation\n• \"Rain on someone's parade\" = spoil someone's plans",
+      "category": "conversational_english",
+      "difficulty": "intermediate",
+      "tags": ["idioms", "expressions", "daily_conversation"],
+      "source": "manual"
+    },
+    {
+      "title": "American vs British Slang",
+      "content": "💬 **Conversational English: Slang Differences**\n\n🔹 **American Slang**:\n• \"That's awesome!\" = that's great\n• \"I'm bummed\" = I'm disappointed\n• \"Hang out\" = spend time together\n• \"My bad\" = my mistake\n\n🔹 **British Slang**:\n• \"That's brilliant!\" = that's great\n• \"I'm gutted\" = I'm disappointed\n• \"Have a chat\" = talk together\n• \"My fault\" = my mistake\n\n🔹 **Universal Casual**:\n• \"Cool\" = good/okay\n• \"No worries\" = no problem\n• \"Catch up\" = talk after time apart\n\n💡 **Tip**: Match the slang to your audience",
+      "category": "conversational_english",
+      "difficulty": "intermediate",
+      "tags": ["slang", "american_english", "british_english", "casual_language"],
+      "source": "manual"
+    },
+    {
+      "title": "Cultural Expressions - Understanding Context",
+      "content": "💬 **Conversational English: Cultural Context**\n\n🔹 **Indirect Communication**:\n• \"That's interesting\" = I disagree (polite)\n• \"We should do lunch sometime\" = maybe never (vague)\n• \"I'll think about it\" = probably no (diplomatic)\n\n🔹 **Positive Reinforcement**:\n• \"Good for you!\" = congratulations\n• \"You're on fire!\" = you're doing great\n• \"Keep it up!\" = continue the good work\n\n🔹 **Social Situations**:\n• \"Let's play it by ear\" = decide as we go\n• \"I'm all ears\" = I'm listening carefully\n• \"Break a leg!\" = good luck (theater origin)\n\n💡 **Key**: Context determines meaning",
+      "category": "conversational_english",
+      "difficulty": "advanced",
+      "tags": ["cultural_expressions", "context", "social_language"],
+      "source": "manual"
+    },
+    {
+      "title": "Difficult Consonant Sounds",
+      "content": "🗣️ **Pronunciation: Challenging Consonants**\n\n🔹 **TH Sounds**:\n• /θ/ (voiceless): *think*, *three*, *math*\n• /ð/ (voiced): *this*, *that*, *mother*\n• **Tip**: Tongue between teeth, blow air\n\n🔹 **R vs L**:\n• R: Tongue curled back, *red*, *right*, *very*\n• L: Tongue touches roof, *left*, *light*, *hello*\n• **Practice**: \"Really lovely red roses\"\n\n🔹 **V vs W**:\n• V: Teeth on lip, *very*, *voice*, *have*\n• W: Round lips, *water*, *work*, *away*\n• **Practice**: \"We have very warm weather\"\n\n💡 **Method**: Practice minimal pairs daily",
+      "category": "pronunciation",
+      "difficulty": "intermediate",
+      "tags": ["consonants", "th_sounds", "r_l_sounds", "v_w_sounds"],
+      "source": "manual"
+    },
+    {
+      "title": "Word Stress Patterns",
+      "content": "🗣️ **Pronunciation: Word Stress**\n\n🔹 **Two-Syllable Rules**:\n• Nouns: First syllable (*PRE-sent*, *RE-cord*)\n• Verbs: Second syllable (pre-SENT, re-CORD)\n• **Exception**: Many words break this rule\n\n🔹 **Compound Words**:\n• Compound nouns: First part (*BLACK-board*, *FOOT-ball*)\n• Compound adjectives: Second part (well-KNOWN, home-MADE)\n\n🔹 **Suffixes**:\n• -tion, -sion: Before suffix (infor-MA-tion, deci-SION)\n• -ic: Before suffix (draMA-tic, econoMIC)\n• -ly: No change (QUICK-ly, beauti-FUL-ly)\n\n💡 **Practice**: Mark stress in new vocabulary",
+      "category": "pronunciation",
+      "difficulty": "advanced",
+      "tags": ["word_stress", "syllables", "compound_words", "suffixes"],
+      "source": "manual"
+    },
+    {
+      "title": "Intonation Patterns",
+      "content": "🗣️ **Pronunciation: Intonation**\n\n🔹 **Rising Intonation** ↗:\n• Yes/No questions: \"Are you coming?\"\n• Uncertainty: \"I think so?\"\n• Lists (non-final): \"Apples, oranges, bananas\"\n\n🔹 **Falling Intonation** ↘:\n• Statements: \"I'm going home.\"\n• Wh-questions: \"Where are you going?\"\n• Commands: \"Close the door.\"\n\n🔹 **Rise-Fall** ↗↘:\n• Surprise: \"Really?\"\n• Emphasis: \"That's amazing!\"\n• Sarcasm: \"Great job.\"\n\n💡 **Practice**: Record yourself and compare with native speakers",
+      "category": "pronunciation",
+      "difficulty": "advanced",
+      "tags": ["intonation", "rising_falling", "questions", "statements"],
+      "source": "manual"
+    },
+    {
+      "title": "Paragraph Structure - PEEL Method",
+      "content": "✍️ **Writing Skills: Paragraph Organization**\n\n📝 **PEEL Structure**:\n• **P**oint: Topic sentence with main idea\n• **E**vidence: Supporting facts, examples, quotes\n• **E**xplain: Analysis of how evidence supports point\n• **L**ink: Connection to next paragraph or conclusion\n\n✅ **Example**:\n**Point**: \"Social media negatively impacts mental health.\"\n**Evidence**: \"Studies show 40% increase in anxiety among heavy users.\"\n**Explain**: \"This occurs because constant comparison creates unrealistic expectations.\"\n**Link**: \"This psychological impact extends to academic performance.\"\n\n💡 **Benefit**: Clear, logical flow of ideas",
+      "category": "writing_skills",
+      "difficulty": "intermediate",
+      "tags": ["paragraph_structure", "peel_method", "organization"],
+      "source": "manual"
+    },
+    {
+      "title": "Transition Words - Connecting Ideas",
+      "content": "✍️ **Writing Skills: Smooth Transitions**\n\n🔹 **Adding Information**:\n• Furthermore, Moreover, Additionally\n• In addition, Also, Besides\n• \"Furthermore, the research indicates...\"\n\n🔹 **Contrasting Ideas**:\n• However, Nevertheless, On the contrary\n• Despite this, In contrast, Conversely\n• \"However, critics argue that...\"\n\n🔹 **Showing Results**:\n• Therefore, Consequently, As a result\n• Thus, Hence, Accordingly\n• \"Therefore, we can conclude...\"\n\n🔹 **Sequencing**:\n• First, Second, Finally\n• Initially, Subsequently, Ultimately\n\n💡 **Rule**: Don't overuse - vary your transitions",
+      "category": "writing_skills",
+      "difficulty": "intermediate",
+      "tags": ["transitions", "connecting_words", "flow", "cohesion"],
+      "source": "manual"
+    },
+    {
+      "title": "Writing Style - Conciseness",
+      "content": "✍️ **Writing Skills: Clear and Concise Style**\n\n🔹 **Eliminate Redundancy**:\n• ❌ \"Free gift\" → ✅ \"Gift\"\n• ❌ \"Past history\" → ✅ \"History\"\n• ❌ \"End result\" → ✅ \"Result\"\n\n🔹 **Active vs Passive Voice**:\n• ❌ \"Mistakes were made by the team\" \n• ✅ \"The team made mistakes\"\n\n🔹 **Strong Verbs**:\n• ❌ \"She is a good singer\" \n• ✅ \"She sings beautifully\"\n• ❌ \"The report gives information\" \n• ✅ \"The report reveals\"\n\n🔹 **Cut Filler Words**:\n• Remove: \"very\", \"really\", \"quite\", \"rather\"\n\n💡 **Goal**: Maximum impact with minimum words",
+      "category": "writing_skills",
+      "difficulty": "advanced",
+      "tags": ["conciseness", "active_voice", "strong_verbs", "editing"],
+      "source": "manual"
+    }
+  ]
+}

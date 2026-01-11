@@ -8,3 +8,4 @@ psutil==5.9.6
 requests==2.31.0
 httpx==0.25.2
 httpcore==1.0.2
+pytz==2023.3
