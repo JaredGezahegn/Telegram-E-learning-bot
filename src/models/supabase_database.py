@@ -33,6 +33,10 @@ class SupabaseManager:
         }
         self._initialized = False
     
+    def is_initialized(self) -> bool:
+        """Check if database is properly initialized."""
+        return self._initialized
+    
     def test_connection(self) -> bool:
         """Test database connection."""
         try:

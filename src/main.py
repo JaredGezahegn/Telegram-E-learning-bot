@@ -15,6 +15,17 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 # Global shutdown event
 shutdown_event = asyncio.Event()
 
+def setup_logging():
+    """Set up logging configuration."""
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.StreamHandler(sys.stdout),
+            logging.FileHandler('bot.log')
+        ]
+    )
+
 def signal_handler(signum, frame):
     """Handle shutdown signals gracefully."""
     logger = logging.getLogger(__name__)
@@ -27,14 +38,7 @@ async def main_async():
     
     try:
         # Setup logging
-        logging.basicConfig(
-            level=logging.INFO,
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            handlers=[
-                logging.StreamHandler(sys.stdout),
-                logging.FileHandler('bot.log')
-            ]
-        )
+        setup_logging()
         
         logger.info("Starting Telegram English Bot (Simple Version)")
         
