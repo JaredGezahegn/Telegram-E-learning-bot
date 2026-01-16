@@ -16,6 +16,7 @@ from src.models.lesson import Lesson
 from src.models.posting_history import PostingHistory
 from .lesson_manager import LessonManager
 from .bot_controller import BotController
+from .quiz_generator import QuizGenerator
 from .resilience_service import get_resilience_service, ErrorSeverity
 
 
@@ -37,6 +38,11 @@ class SchedulerService:
         self.bot_controller = bot_controller
         self.config = get_config()
         self.resilience_service = get_resilience_service()
+        self.quiz_generator = QuizGenerator()
+        
+        # Quiz configuration
+        self.enable_quizzes = self.config.enable_quizzes
+        self.quiz_delay_minutes = self.config.quiz_delay_minutes
         
         # Initialize scheduler with async support
         jobstores = {
@@ -214,12 +220,26 @@ class SchedulerService:
                     
                     logger.info(f"Daily lesson posted successfully: {lesson.title}")
                     
+                    # Schedule quiz if enabled
+                    if self.enable_quizzes:
+                        logger.info(f"Scheduling quiz for lesson {lesson.id} in {self.quiz_delay_minutes} minutes")
+                        self.scheduler.add_job(
+                            func=self._post_quiz_for_lesson,
+                            trigger='date',
+                            run_date=datetime.now(pytz.timezone(self.config.timezone)) + timedelta(minutes=self.quiz_delay_minutes),
+                            args=[lesson],
+                            id=f"quiz_for_lesson_{lesson.id}",
+                            name=f"Quiz for {lesson.title}",
+                            replace_existing=True
+                        )
+                    
                     return {
                         'success': True,
                         'lesson_id': lesson.id,
                         'lesson_title': lesson.title,
                         'message_id': send_result.get('message_id'),
                         'attempts': send_result.get('attempts', 1),
+                        'quiz_scheduled': self.enable_quizzes,
                         'timestamp': execution_start
                     }
                 else:
@@ -301,6 +321,59 @@ class SchedulerService:
             
         except Exception as e:
             logger.error(f"Failed to record posting history: {e}")
+    
+    async def _post_quiz_for_lesson(self, lesson: Lesson) -> Dict[str, Any]:
+        """
+        Post a quiz for the given lesson.
+        
+        Args:
+            lesson: The lesson to generate a quiz for
+            
+        Returns:
+            Dictionary with quiz posting results
+        """
+        try:
+            logger.info(f"Generating quiz for lesson {lesson.id}: {lesson.title}")
+            
+            # Generate quiz from lesson content
+            quiz = self.quiz_generator.generate_quiz(lesson)
+            
+            if not quiz:
+                logger.error(f"Failed to generate quiz for lesson {lesson.id}")
+                return {
+                    'success': False,
+                    'error': 'Quiz generation failed',
+                    'lesson_id': lesson.id
+                }
+            
+            logger.info(f"Quiz generated with {len(quiz.questions)} questions")
+            
+            # Send quiz to channel
+            send_result = await self.bot_controller.send_quiz(quiz, lesson)
+            
+            if send_result['success']:
+                logger.info(f"Quiz posted successfully for lesson {lesson.id}")
+                return {
+                    'success': True,
+                    'lesson_id': lesson.id,
+                    'quiz_id': quiz.id,
+                    'message_id': send_result.get('message_id')
+                }
+            else:
+                logger.error(f"Failed to post quiz: {send_result.get('error')}")
+                return {
+                    'success': False,
+                    'error': send_result.get('error'),
+                    'lesson_id': lesson.id
+                }
+                
+        except Exception as e:
+            logger.error(f"Error posting quiz for lesson {lesson.id}: {e}")
+            return {
+                'success': False,
+                'error': str(e),
+                'lesson_id': lesson.id
+            }
     
     async def _check_missed_posts(self) -> None:
         """Check for and handle missed posts on startup."""
