@@ -21,16 +21,6 @@ class SupabaseLessonRepository:
         else:
             from ..models.supabase_database import create_supabase_manager
             self.db_manager = create_supabase_manager()
-        
-        if not self.db_manager.is_initialized():
-            # Initialize in sync context - you may want to handle this differently
-            import asyncio
-            try:
-                loop = asyncio.get_event_loop()
-                loop.run_until_complete(self.db_manager.initialize_database())
-            except RuntimeError:
-                # If no event loop is running, create one
-                asyncio.run(self.db_manager.initialize_database())
     
     def create_lesson(self, lesson: Lesson) -> Optional[int]:
         """Create a new lesson in Supabase."""
