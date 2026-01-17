@@ -4,7 +4,7 @@ import os
 import logging
 import requests
 from typing import Optional, List, Dict, Any
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from .lesson import Lesson
 from .posting_history import PostingHistory
@@ -237,6 +237,174 @@ class SupabaseManager:
         except Exception as e:
             logger.error(f"Failed to get posting history: {e}")
             return []
+    
+    def get_lessons_by_difficulty(self, difficulty: str) -> List[Lesson]:
+        """Get lessons by difficulty."""
+        try:
+            response = requests.get(
+                f"{self.base_url}/lessons?difficulty=eq.{difficulty}",
+                headers=self.headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                return [self._row_to_lesson(row) for row in data]
+            
+            return []
+            
+        except Exception as e:
+            logger.error(f"Failed to get lessons by difficulty {difficulty}: {e}")
+            return []
+    
+    def get_unused_lessons_by_days(self, days: int = 30) -> List[Lesson]:
+        """Get lessons not used in the specified number of days."""
+        try:
+            cutoff_date = (datetime.utcnow() - timedelta(days=days)).isoformat()
+            
+            response = requests.get(
+                f"{self.base_url}/lessons?or=(last_used.is.null,last_used.lt.{cutoff_date})",
+                headers=self.headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                return [self._row_to_lesson(row) for row in data]
+            
+            return []
+            
+        except Exception as e:
+            logger.error(f"Failed to get unused lessons: {e}")
+            return []
+    
+    def get_least_used_lessons(self, limit: int = 10) -> List[Lesson]:
+        """Get the least used lessons."""
+        try:
+            response = requests.get(
+                f"{self.base_url}/lessons?order=usage_count.asc&limit={limit}",
+                headers=self.headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                return [self._row_to_lesson(row) for row in data]
+            
+            return []
+            
+        except Exception as e:
+            logger.error(f"Failed to get least used lessons: {e}")
+            return []
+    
+    def search_lessons(self, query: str) -> List[Lesson]:
+        """Search lessons by title or content."""
+        try:
+            response = requests.get(
+                f"{self.base_url}/lessons?or=(title.ilike.*{query}*,content.ilike.*{query}*)",
+                headers=self.headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                return [self._row_to_lesson(row) for row in data]
+            
+            return []
+            
+        except Exception as e:
+            logger.error(f"Failed to search lessons with query '{query}': {e}")
+            return []
+    
+    def get_lesson_statistics(self) -> Dict[str, Any]:
+        """Get lesson statistics."""
+        try:
+            response = requests.get(
+                f"{self.base_url}/lessons?select=category,difficulty",
+                headers=self.headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                total_count = len(data)
+                
+                # Calculate category distribution
+                categories = {}
+                difficulties = {}
+                for row in data:
+                    cat = row['category']
+                    categories[cat] = categories.get(cat, 0) + 1
+                    
+                    diff = row['difficulty']
+                    difficulties[diff] = difficulties.get(diff, 0) + 1
+                
+                return {
+                    'total_lessons': total_count,
+                    'categories': categories,
+                    'difficulties': difficulties,
+                    'last_updated': datetime.utcnow().isoformat()
+                }
+            
+            return {
+                'total_lessons': 0,
+                'categories': {},
+                'difficulties': {},
+                'error': 'Failed to fetch data'
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to get lesson statistics: {e}")
+            return {
+                'total_lessons': 0,
+                'categories': {},
+                'difficulties': {},
+                'error': str(e)
+            }
+    
+    def delete_lesson(self, lesson_id: int) -> bool:
+        """Delete a lesson (use with caution)."""
+        try:
+            response = requests.delete(
+                f"{self.base_url}/lessons?id=eq.{lesson_id}",
+                headers=self.headers,
+                timeout=10
+            )
+            
+            return response.status_code in [200, 204]
+            
+        except Exception as e:
+            logger.error(f"Failed to delete lesson {lesson_id}: {e}")
+            return False
+    
+    def update_lesson(self, lesson: Lesson) -> bool:
+        """Update an existing lesson."""
+        try:
+            if not lesson.id:
+                logger.error("Cannot update lesson without ID")
+                return False
+            
+            lesson_data = {
+                'title': lesson.title,
+                'content': lesson.content,
+                'category': lesson.category,
+                'difficulty': lesson.difficulty,
+                'tags': lesson.tags,
+                'source': getattr(lesson, 'source', None)
+            }
+            
+            response = requests.patch(
+                f"{self.base_url}/lessons?id=eq.{lesson.id}",
+                headers=self.headers,
+                json=lesson_data,
+                timeout=10
+            )
+            
+            return response.status_code in [200, 204]
+            
+        except Exception as e:
+            logger.error(f"Failed to update lesson {lesson.id}: {e}")
+            return False
 
 
 # Convenience function

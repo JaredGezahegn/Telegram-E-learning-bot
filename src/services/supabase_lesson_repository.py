@@ -49,37 +49,22 @@ class SupabaseLessonRepository:
     
     def get_lessons_by_difficulty(self, difficulty: str) -> List[Lesson]:
         """Get lessons by difficulty from Supabase."""
-        try:
-            result = self.db_manager.client.table('lessons').select('*').eq('difficulty', difficulty).execute()
-            return [self.db_manager._row_to_lesson(row) for row in result.data]
-        except Exception as e:
-            logger.error(f"Failed to get lessons by difficulty {difficulty}: {e}")
-            return []
+        return self.db_manager.get_lessons_by_difficulty(difficulty)
     
-    def get_unused_lessons(self, days: int = 30) -> List[Lesson]:
-        """Get lessons not used in the specified number of days."""
-        try:
-            cutoff_date = (datetime.utcnow() - timedelta(days=days)).isoformat()
-            
-            # Get lessons that haven't been used recently or never used
-            result = self.db_manager.client.table('lessons').select('*').or_(
-                f'last_used.is.null,last_used.lt.{cutoff_date}'
-            ).execute()
-            
-            return [self.db_manager._row_to_lesson(row) for row in result.data]
-            
-        except Exception as e:
-            logger.error(f"Failed to get unused lessons: {e}")
-            return []
+    def get_unused_lessons(self, days: int = None) -> List[Lesson]:
+        """Get lessons not used in the specified number of days, or never used if days is None."""
+        if days is None:
+            return self.db_manager.get_unused_lessons()
+        else:
+            return self.db_manager.get_unused_lessons_by_days(days)
     
     def get_least_used_lessons(self, limit: int = 10) -> List[Lesson]:
         """Get the least used lessons."""
-        try:
-            result = self.db_manager.client.table('lessons').select('*').order('usage_count').limit(limit).execute()
-            return [self.db_manager._row_to_lesson(row) for row in result.data]
-        except Exception as e:
-            logger.error(f"Failed to get least used lessons: {e}")
-            return []
+        return self.db_manager.get_least_used_lessons(limit)
+    
+    def get_least_recently_used_lesson(self) -> Optional[Lesson]:
+        """Get the least recently used lesson."""
+        return self.db_manager.get_least_recently_used_lesson()
     
     def update_lesson_usage(self, lesson_id: int) -> bool:
         """Update lesson usage statistics."""
@@ -87,17 +72,7 @@ class SupabaseLessonRepository:
     
     def search_lessons(self, query: str) -> List[Lesson]:
         """Search lessons by title or content."""
-        try:
-            # Use Supabase text search
-            result = self.db_manager.client.table('lessons').select('*').or_(
-                f'title.ilike.%{query}%,content.ilike.%{query}%'
-            ).execute()
-            
-            return [self.db_manager._row_to_lesson(row) for row in result.data]
-            
-        except Exception as e:
-            logger.error(f"Failed to search lessons with query '{query}': {e}")
-            return []
+        return self.db_manager.search_lessons(query)
     
     def get_lessons_by_tags(self, tags: List[str]) -> List[Lesson]:
         """Get lessons that contain any of the specified tags."""
@@ -120,72 +95,15 @@ class SupabaseLessonRepository:
     
     def get_lesson_statistics(self) -> Dict[str, Any]:
         """Get lesson statistics."""
-        try:
-            # Get total count
-            total_result = self.db_manager.client.table('lessons').select('id', count='exact').execute()
-            total_count = total_result.count
-            
-            # Get category distribution
-            categories_result = self.db_manager.client.table('lessons').select('category').execute()
-            categories = {}
-            for row in categories_result.data:
-                cat = row['category']
-                categories[cat] = categories.get(cat, 0) + 1
-            
-            # Get difficulty distribution
-            difficulties_result = self.db_manager.client.table('lessons').select('difficulty').execute()
-            difficulties = {}
-            for row in difficulties_result.data:
-                diff = row['difficulty']
-                difficulties[diff] = difficulties.get(diff, 0) + 1
-            
-            return {
-                'total_lessons': total_count,
-                'categories': categories,
-                'difficulties': difficulties,
-                'last_updated': datetime.utcnow().isoformat()
-            }
-            
-        except Exception as e:
-            logger.error(f"Failed to get lesson statistics: {e}")
-            return {
-                'total_lessons': 0,
-                'categories': {},
-                'difficulties': {},
-                'error': str(e)
-            }
+        return self.db_manager.get_lesson_statistics()
     
     def delete_lesson(self, lesson_id: int) -> bool:
         """Delete a lesson (use with caution)."""
-        try:
-            result = self.db_manager.client.table('lessons').delete().eq('id', lesson_id).execute()
-            return len(result.data) > 0
-        except Exception as e:
-            logger.error(f"Failed to delete lesson {lesson_id}: {e}")
-            return False
+        return self.db_manager.delete_lesson(lesson_id)
     
     def update_lesson(self, lesson: Lesson) -> bool:
         """Update an existing lesson."""
-        try:
-            if not lesson.id:
-                logger.error("Cannot update lesson without ID")
-                return False
-            
-            lesson_data = {
-                'title': lesson.title,
-                'content': lesson.content,
-                'category': lesson.category,
-                'difficulty': lesson.difficulty,
-                'tags': lesson.tags,
-                'source': getattr(lesson, 'source', None)
-            }
-            
-            result = self.db_manager.client.table('lessons').update(lesson_data).eq('id', lesson.id).execute()
-            return len(result.data) > 0
-            
-        except Exception as e:
-            logger.error(f"Failed to update lesson {lesson.id}: {e}")
-            return False
+        return self.db_manager.update_lesson(lesson)
     
     def test_connection(self) -> bool:
         """Test repository connection."""
