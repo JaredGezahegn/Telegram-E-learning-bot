@@ -278,6 +278,45 @@ class SupabaseManager:
             logger.error(f"Failed to get unused lessons: {e}")
             return []
     
+    def get_unused_lessons(self) -> List[Lesson]:
+        """Get lessons that have never been used (usage_count = 0 or last_used is null)."""
+        try:
+            response = requests.get(
+                f"{self.base_url}/lessons?or=(last_used.is.null,usage_count.eq.0)",
+                headers=self.headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                return [self._row_to_lesson(row) for row in data]
+            
+            return []
+            
+        except Exception as e:
+            logger.error(f"Failed to get unused lessons: {e}")
+            return []
+    
+    def get_least_recently_used_lesson(self) -> Optional[Lesson]:
+        """Get the lesson that was used least recently."""
+        try:
+            response = requests.get(
+                f"{self.base_url}/lessons?order=last_used.asc.nullsfirst,usage_count.asc&limit=1",
+                headers=self.headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data:
+                    return self._row_to_lesson(data[0])
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Failed to get least recently used lesson: {e}")
+            return None
+    
     def get_least_used_lessons(self, limit: int = 10) -> List[Lesson]:
         """Get the least used lessons."""
         try:
