@@ -2,11 +2,10 @@
 
 import logging
 from datetime import datetime, timedelta
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Union
 from enum import Enum
 
 from ..models.lesson import Lesson
-from .lesson_repository import LessonRepository
 
 
 logger = logging.getLogger(__name__)
@@ -22,16 +21,15 @@ class SelectionStrategy(Enum):
 class LessonSelector:
     """Service for selecting lessons with duplication prevention."""
     
-    def __init__(self, repository: Optional[LessonRepository] = None, 
-                 cycle_days: int = 30):
+    def __init__(self, repository, cycle_days: int = 30):
         """
         Initialize lesson selector.
         
         Args:
-            repository: Lesson repository instance
+            repository: Lesson repository instance (SQLite or Supabase)
             cycle_days: Number of days before allowing lesson reuse
         """
-        self.repository = repository or LessonRepository()
+        self.repository = repository
         self.cycle_days = cycle_days
         self._last_category = None
     

@@ -5,7 +5,7 @@ from typing import Optional, List, Dict, Any
 from pathlib import Path
 
 from ..models.lesson import Lesson
-from .lesson_repository import LessonRepository
+from .database_factory import create_lesson_repository
 from .lesson_selector import LessonSelector, SelectionStrategy
 
 
@@ -20,10 +20,11 @@ class LessonManager:
         Initialize lesson manager.
         
         Args:
-            db_path: Path to SQLite database
+            db_path: Path to SQLite database (ignored if using Supabase)
             cycle_days: Number of days before allowing lesson reuse
         """
-        self.repository = LessonRepository(db_path)
+        # Use database factory to create appropriate repository
+        self.repository = create_lesson_repository()
         self.selector = LessonSelector(self.repository, cycle_days)
     
     # Repository operations
