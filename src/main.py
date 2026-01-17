@@ -53,10 +53,10 @@ async def main_async():
         start_health_service(port=8000)
         logger.info("Health service started on port 8000")
         
-        # Initialize lesson manager
+        # Initialize lesson manager (uses database factory internally)
         from src.services.lesson_manager import LessonManager
         
-        lesson_manager = LessonManager(config.database_path)
+        lesson_manager = LessonManager()
         logger.info("Lesson manager initialized")
         
         # Create bot controller
