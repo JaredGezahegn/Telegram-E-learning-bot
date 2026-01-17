@@ -70,6 +70,10 @@ class SupabaseLessonRepository:
         """Update lesson usage statistics."""
         return self.db_manager.update_lesson_usage(lesson_id)
     
+    def mark_lesson_used(self, lesson_id: int) -> bool:
+        """Mark a lesson as used and update usage statistics."""
+        return self.update_lesson_usage(lesson_id)
+    
     def search_lessons(self, query: str) -> List[Lesson]:
         """Search lessons by title or content."""
         return self.db_manager.search_lessons(query)
