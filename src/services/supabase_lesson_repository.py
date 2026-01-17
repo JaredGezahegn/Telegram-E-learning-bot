@@ -34,6 +34,15 @@ class SupabaseLessonRepository:
         """Get all lessons from Supabase."""
         return self.db_manager.get_all_lessons()
     
+    def get_lesson_count(self) -> int:
+        """Get total count of lessons."""
+        try:
+            lessons = self.get_all_lessons()
+            return len(lessons)
+        except Exception as e:
+            logger.error(f"Failed to get lesson count: {e}")
+            return 0
+    
     def get_lessons_by_category(self, category: str) -> List[Lesson]:
         """Get lessons by category from Supabase."""
         return self.db_manager.get_lessons_by_category(category)
