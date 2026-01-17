@@ -224,7 +224,7 @@ class SchedulerService:
                     if self.enable_quizzes:
                         logger.info(f"Scheduling quiz for lesson {lesson.id} in {self.quiz_delay_minutes} minutes")
                         self.scheduler.add_job(
-                            func=self._post_quiz_for_lesson,
+                            func=self._post_quiz_for_lesson_sync,
                             trigger='date',
                             run_date=datetime.now(pytz.timezone(self.config.timezone)) + timedelta(minutes=self.quiz_delay_minutes),
                             args=[lesson],
@@ -374,6 +374,31 @@ class SchedulerService:
                 'error': str(e),
                 'lesson_id': lesson.id
             }
+    
+    def _post_quiz_for_lesson_sync(self, lesson: Lesson) -> None:
+        """
+        Synchronous wrapper for posting quiz (for APScheduler).
+        
+        Args:
+            lesson: The lesson to generate a quiz for
+        """
+        import asyncio
+        try:
+            # Run the async method in the event loop
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                # If we're already in an event loop, create a new task
+                asyncio.create_task(self._post_quiz_for_lesson(lesson))
+            else:
+                # If no event loop is running, run it
+                loop.run_until_complete(self._post_quiz_for_lesson(lesson))
+        except Exception as e:
+            logger.error(f"Error in quiz sync wrapper: {e}")
+            # Try alternative approach
+            try:
+                asyncio.run(self._post_quiz_for_lesson(lesson))
+            except Exception as e2:
+                logger.error(f"Failed to post quiz with alternative method: {e2}")
     
     async def _check_missed_posts(self) -> None:
         """Check for and handle missed posts on startup."""
