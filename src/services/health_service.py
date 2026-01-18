@@ -59,6 +59,28 @@ class HealthCheckHandler(BaseHTTPRequestHandler):
             self.send_response(404)
             self.end_headers()
     
+    def do_HEAD(self):
+        """Handle HEAD requests for health checks (same as GET but no body)."""
+        if self.path == '/health':
+            try:
+                health_status = self.get_health_status()
+                self.send_response(200 if health_status['healthy'] else 503)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                # No body for HEAD requests
+            except Exception as e:
+                logger.error(f"Health check failed: {e}")
+                self.send_response(503)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+        elif self.path == '/debug':
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+        else:
+            self.send_response(404)
+            self.end_headers()
+    
     def get_health_status(self) -> Dict[str, Any]:
         """Get current health status of the application."""
         try:
