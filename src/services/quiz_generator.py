@@ -91,6 +91,43 @@ class QuizGenerator:
             'tags': lesson.tags or []
         }
     
+    def _truncate_explanation(self, explanation: str, max_length: int = 200) -> str:
+        """Truncate explanation to fit Telegram's character limit.
+        
+        Args:
+            explanation: Original explanation text
+            max_length: Maximum allowed length (default 200 for Telegram polls)
+            
+        Returns:
+            Truncated explanation that fits within the limit
+        """
+        if not explanation:
+            return ""
+        
+        # Clean up the explanation first
+        clean_explanation = self._clean_example_text(explanation)
+        
+        # If it's already short enough, return as is
+        if len(clean_explanation) <= max_length:
+            return clean_explanation
+        
+        # Truncate and add ellipsis
+        truncated = clean_explanation[:max_length - 3].strip()
+        
+        # Try to break at a sentence or word boundary
+        if '.' in truncated:
+            # Break at the last complete sentence
+            last_period = truncated.rfind('.')
+            if last_period > max_length // 2:  # Only if we're not losing too much
+                truncated = truncated[:last_period + 1]
+        elif ' ' in truncated:
+            # Break at the last complete word
+            last_space = truncated.rfind(' ')
+            if last_space > max_length // 2:  # Only if we're not losing too much
+                truncated = truncated[:last_space]
+        
+        return truncated + "..." if len(clean_explanation) > len(truncated) else truncated
+    
     def _clean_example_text(self, text: str) -> str:
         """Clean up example text by removing formatting."""
         if not text:
@@ -215,7 +252,9 @@ class QuizGenerator:
                 elif opt.is_correct:
                     found_correct = True
         
-        explanation = info['rules'][0] if info['rules'] else f"Remember the rule for {info['title'].lower()}."
+        explanation = self._truncate_explanation(
+            info['rules'][0] if info['rules'] else f"Remember the rule for {info['title'].lower()}."
+        )
         
         return Quiz(
             lesson_id=lesson.id,
@@ -258,7 +297,9 @@ class QuizGenerator:
         
         options = options[:5]  # Limit to 5 options
         
-        explanation = info['tips'][0] if info['tips'] else f"Review the key rule for {info['title'].lower()}."
+        explanation = self._truncate_explanation(
+            info['tips'][0] if info['tips'] else f"Review the key rule for {info['title'].lower()}."
+        )
         
         return Quiz(
             lesson_id=lesson.id,
@@ -317,7 +358,9 @@ class QuizGenerator:
         distractors = self._generate_vocabulary_distractors(lesson, info)
         options.extend(distractors[:2])
         
-        explanation = f"Remember the context and usage rules for {info['title'].lower()}."
+        explanation = self._truncate_explanation(
+            f"Remember the context and usage rules for {info['title'].lower()}."
+        )
         
         return Quiz(
             lesson_id=lesson.id,
