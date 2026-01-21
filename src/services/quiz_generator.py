@@ -51,8 +51,8 @@ class QuizGenerator:
         content = lesson.content
         
         # Extract examples (✅ and ❌ patterns)
-        correct_examples = re.findall(r'✅[^❌\n]*(?:\n[^✅❌\n]*)*', content, re.MULTILINE)
-        wrong_examples = re.findall(r'❌[^✅\n]*(?:\n[^✅❌\n]*)*', content, re.MULTILINE)
+        correct_examples_raw = re.findall(r'✅[^❌\n]*(?:\n[^✅❌\n]*)*', content, re.MULTILINE)
+        wrong_examples_raw = re.findall(r'❌[^✅\n]*(?:\n[^✅❌\n]*)*', content, re.MULTILINE)
         
         # Also look for examples in bullet points
         bullet_examples = re.findall(r'•[^\n•]*', content)
@@ -64,9 +64,15 @@ class QuizGenerator:
         # Extract structured information (🔹 patterns)
         structured_info = re.findall(r'🔹[^🔹\n]*(?:\n[^🔹\n]*)*', content, re.MULTILINE)
         
-        # Clean up extracted text
-        correct_examples = [self._clean_example_text(ex) for ex in correct_examples]
-        wrong_examples = [self._clean_example_text(ex) for ex in wrong_examples]
+        # Clean up extracted text and get individual examples
+        correct_examples = []
+        for ex in correct_examples_raw:
+            correct_examples.extend(self._extract_individual_examples(ex))
+        
+        wrong_examples = []
+        for ex in wrong_examples_raw:
+            wrong_examples.extend(self._extract_individual_examples(ex))
+        
         bullet_examples = [self._clean_example_text(ex) for ex in bullet_examples]
         rules = [self._clean_example_text(rule) for rule in rules]
         tips = [self._clean_example_text(tip) for tip in tips]
@@ -128,18 +134,85 @@ class QuizGenerator:
         
         return truncated + "..." if len(clean_explanation) > len(truncated) else truncated
     
+    def _extract_individual_examples(self, text: str) -> List[str]:
+        """Extract individual example sentences from a text block."""
+        if not text:
+            return []
+        
+        # Remove emojis and formatting markers
+        text = re.sub(r'[✅❌📝💡🔹⚠️🎯⏰]', '', text)
+        
+        # Remove section headers like "**Correct Examples:**", "**Wrong Examples:**", etc.
+        text = re.sub(r'\*\*[^*]+\*\*:?\s*', '', text)
+        
+        # Remove italic markers
+        text = re.sub(r'\*([^*]+)\*', r'\1', text)
+        
+        examples = []
+        
+        # Split by bullet points first
+        bullet_parts = re.split(r'[•]', text)
+        
+        for part in bullet_parts:
+            part = part.strip()
+            if not part:
+                continue
+                
+            # Further split by line breaks for multi-line examples
+            line_parts = part.split('\n')
+            
+            for line in line_parts:
+                line = line.strip()
+                if line and len(line) > 10:  # Reasonable length
+                    # Clean up whitespace
+                    line = re.sub(r'\s+', ' ', line)
+                    
+                    # Remove parenthetical explanations like "(still living here)"
+                    line = re.sub(r'\([^)]*\)', '', line)
+                    line = line.strip()
+                    
+                    if line and len(line) > 5:
+                        examples.append(line)
+        
+        return examples
+    
     def _clean_example_text(self, text: str) -> str:
-        """Clean up example text by removing formatting."""
+        """Clean up example text by removing formatting and extracting the first sentence."""
+        examples = self._extract_individual_examples(text)
+        return examples[0] if examples else ""
+        """Clean up example text by removing formatting and extracting individual sentences."""
         if not text:
             return ""
         
         # Remove emojis and formatting markers
         text = re.sub(r'[✅❌📝💡🔹⚠️🎯⏰•]', '', text)
-        text = re.sub(r'\*\*.*?\*\*:', '', text)
-        text = re.sub(r'\*([^*]+)\*', r'\1', text)  # Remove italic markers
-        text = re.sub(r'\s+', ' ', text)  # Normalize whitespace
         
-        return text.strip()
+        # Remove section headers like "**Correct Examples:**", "**Wrong Examples:**", etc.
+        text = re.sub(r'\*\*[^*]+\*\*:?\s*', '', text)
+        
+        # Remove italic markers
+        text = re.sub(r'\*([^*]+)\*', r'\1', text)
+        
+        # Split into individual sentences/examples and take the first clean one
+        sentences = []
+        
+        # Split by bullet points, line breaks, or periods
+        parts = re.split(r'[•\n]|(?<=\.)\s+', text)
+        
+        for part in parts:
+            clean_part = part.strip()
+            if clean_part and len(clean_part) > 10:  # Reasonable length
+                # Remove any remaining formatting
+                clean_part = re.sub(r'\s+', ' ', clean_part)
+                sentences.append(clean_part)
+        
+        # Return the first good sentence, or the cleaned text if no sentences found
+        if sentences:
+            return sentences[0].strip()
+        else:
+            # Fallback: just clean the original text
+            text = re.sub(r'\s+', ' ', text)
+            return text.strip()
     
     def _generate_grammar_quiz(self, lesson: Lesson, info: Dict[str, Any]) -> Quiz:
         """Generate a grammar-focused quiz."""
@@ -198,9 +271,9 @@ class QuizGenerator:
                 ))
         
         # Add wrong examples as incorrect answers
-        for wrong_ex in info['wrong_examples'][:2]:  # Max 2 wrong examples
+        for wrong_ex in info['wrong_examples'][:3]:  # Max 3 wrong examples to avoid duplicates
             wrong_text = self._clean_example_text(wrong_ex)
-            if wrong_text and wrong_text not in [opt.text for opt in options]:
+            if wrong_text and wrong_text not in [opt.text for opt in options] and len(wrong_text) > 5:
                 options.append(QuizOption(
                     text=wrong_text,
                     is_correct=False,
