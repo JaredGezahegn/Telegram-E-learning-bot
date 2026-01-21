@@ -336,7 +336,7 @@ class SchedulerService:
             logger.info(f"Generating quiz for lesson {lesson.id}: {lesson.title}")
             
             # Generate quiz from lesson content
-            quiz = self.quiz_generator.generate_quiz(lesson)
+            quiz = self.quiz_generator.generate_quiz_for_lesson(lesson)
             
             if not quiz:
                 logger.error(f"Failed to generate quiz for lesson {lesson.id}")
@@ -349,7 +349,7 @@ class SchedulerService:
             logger.info(f"Quiz generated with {len(quiz.questions)} questions")
             
             # Send quiz to channel
-            send_result = await self.bot_controller.send_quiz(quiz, lesson)
+            send_result = await self.bot_controller.send_quiz_poll(quiz, delay_minutes=0)
             
             if send_result['success']:
                 logger.info(f"Quiz posted successfully for lesson {lesson.id}")
