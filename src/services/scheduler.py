@@ -346,7 +346,7 @@ class SchedulerService:
                     'lesson_id': lesson.id
                 }
             
-            logger.info(f"Quiz generated with {len(quiz.questions)} questions")
+            logger.info(f"Quiz generated with {len(quiz.options)} options")
             
             # Send quiz to channel
             send_result = await self.bot_controller.send_quiz_poll(quiz, delay_minutes=0)
