@@ -222,16 +222,25 @@ class SchedulerService:
                     
                     # Schedule quiz if enabled
                     if self.enable_quizzes:
+                        quiz_run_time = datetime.now(pytz.timezone(self.config.timezone)) + timedelta(minutes=self.quiz_delay_minutes)
                         logger.info(f"Scheduling quiz for lesson {lesson.id} in {self.quiz_delay_minutes} minutes")
-                        self.scheduler.add_job(
-                            func=self._post_quiz_for_lesson_sync,
-                            trigger='date',
-                            run_date=datetime.now(pytz.timezone(self.config.timezone)) + timedelta(minutes=self.quiz_delay_minutes),
-                            args=[lesson],
-                            id=f"quiz_for_lesson_{lesson.id}",
-                            name=f"Quiz for {lesson.title}",
-                            replace_existing=True
-                        )
+                        logger.info(f"Quiz will run at: {quiz_run_time}")
+                        
+                        try:
+                            self.scheduler.add_job(
+                                func=self._post_quiz_for_lesson_sync,
+                                trigger='date',
+                                run_date=quiz_run_time,
+                                args=[lesson],
+                                id=f"quiz_for_lesson_{lesson.id}",
+                                name=f"Quiz for {lesson.title}",
+                                replace_existing=True
+                            )
+                            logger.info(f"Quiz job successfully scheduled for lesson {lesson.id}")
+                        except Exception as e:
+                            logger.error(f"Failed to schedule quiz job for lesson {lesson.id}: {e}")
+                    else:
+                        logger.info("Quizzes are disabled - no quiz scheduled")
                     
                     return {
                         'success': True,
@@ -333,26 +342,30 @@ class SchedulerService:
             Dictionary with quiz posting results
         """
         try:
-            logger.info(f"Generating quiz for lesson {lesson.id}: {lesson.title}")
+            logger.info(f"Starting quiz generation for lesson {lesson.id}: {lesson.title}")
             
             # Generate quiz from lesson content
             quiz = self.quiz_generator.generate_quiz_for_lesson(lesson)
             
             if not quiz:
-                logger.error(f"Failed to generate quiz for lesson {lesson.id}")
+                error_msg = f"Failed to generate quiz for lesson {lesson.id}"
+                logger.error(error_msg)
                 return {
                     'success': False,
                     'error': 'Quiz generation failed',
                     'lesson_id': lesson.id
                 }
             
-            logger.info(f"Quiz generated with {len(quiz.options)} options")
+            logger.info(f"Quiz generated successfully with {len(quiz.options)} options")
+            logger.info(f"Quiz question: {quiz.question}")
             
             # Send quiz to channel
+            logger.info(f"Attempting to send quiz poll for lesson {lesson.id}")
             send_result = await self.bot_controller.send_quiz_poll(quiz, delay_minutes=0)
             
             if send_result['success']:
                 logger.info(f"Quiz posted successfully for lesson {lesson.id}")
+                logger.info(f"Quiz message ID: {send_result.get('message_id')}")
                 return {
                     'success': True,
                     'lesson_id': lesson.id,
@@ -360,15 +373,20 @@ class SchedulerService:
                     'message_id': send_result.get('message_id')
                 }
             else:
-                logger.error(f"Failed to post quiz: {send_result.get('error')}")
+                error_msg = send_result.get('error', 'Unknown error')
+                logger.error(f"Failed to post quiz for lesson {lesson.id}: {error_msg}")
                 return {
                     'success': False,
-                    'error': send_result.get('error'),
+                    'error': error_msg,
                     'lesson_id': lesson.id
                 }
                 
         except Exception as e:
-            logger.error(f"Error posting quiz for lesson {lesson.id}: {e}")
+            error_msg = f"Exception in quiz posting for lesson {lesson.id}: {e}"
+            logger.error(error_msg)
+            # Log full traceback for debugging
+            import traceback
+            logger.error(f"Quiz posting traceback: {traceback.format_exc()}")
             return {
                 'success': False,
                 'error': str(e),
@@ -383,22 +401,26 @@ class SchedulerService:
             lesson: The lesson to generate a quiz for
         """
         import asyncio
-        try:
-            # Run the async method in the event loop
-            loop = asyncio.get_event_loop()
-            if loop.is_running():
-                # If we're already in an event loop, create a new task
-                asyncio.create_task(self._post_quiz_for_lesson(lesson))
-            else:
-                # If no event loop is running, run it
-                loop.run_until_complete(self._post_quiz_for_lesson(lesson))
-        except Exception as e:
-            logger.error(f"Error in quiz sync wrapper: {e}")
-            # Try alternative approach
+        
+        async def run_quiz_post():
+            """Run the quiz posting in a proper async context."""
             try:
-                asyncio.run(self._post_quiz_for_lesson(lesson))
-            except Exception as e2:
-                logger.error(f"Failed to post quiz with alternative method: {e2}")
+                result = await self._post_quiz_for_lesson(lesson)
+                logger.info(f"Quiz posting completed for lesson {lesson.id}: {result}")
+                return result
+            except Exception as e:
+                logger.error(f"Quiz posting failed for lesson {lesson.id}: {e}")
+                return {'success': False, 'error': str(e)}
+        
+        try:
+            # Always use asyncio.run to ensure proper execution
+            result = asyncio.run(run_quiz_post())
+            logger.info(f"Quiz sync wrapper completed for lesson {lesson.id}")
+        except Exception as e:
+            logger.error(f"Error in quiz sync wrapper for lesson {lesson.id}: {e}")
+            # Log the full traceback for debugging
+            import traceback
+            logger.error(f"Quiz sync wrapper traceback: {traceback.format_exc()}")
     
     async def _check_missed_posts(self) -> None:
         """Check for and handle missed posts on startup."""
