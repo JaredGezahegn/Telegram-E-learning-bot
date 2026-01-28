@@ -67,6 +67,9 @@ async def main_async():
             return 1
         logger.info("Bot controller created successfully")
         
+        # Set up application for interactive features
+        bot_controller.setup_application()
+        
         # Create and start scheduler
         from src.services.scheduler import create_scheduler_service
         scheduler_service = await create_scheduler_service(lesson_manager, bot_controller)
@@ -74,6 +77,16 @@ async def main_async():
             logger.error("Failed to create scheduler service")
             return 1
         logger.info("Scheduler service started successfully")
+        
+        # Create and register command handler for interactive features
+        from src.services.command_handler import CommandHandler
+        command_handler = CommandHandler(lesson_manager, scheduler_service)
+        bot_controller.register_command_handlers(command_handler)
+        logger.info("Interactive command handlers registered")
+        
+        # Start polling for interactive features
+        await bot_controller.start_polling()
+        logger.info("Bot polling started for interactive features")
         
         # Log scheduler status
         status = scheduler_service.get_scheduler_status()
@@ -99,6 +112,10 @@ async def main_async():
         # Graceful shutdown
         logger.info("Shutting down...")
         try:
+            if 'bot_controller' in locals() and bot_controller:
+                await bot_controller.stop_polling()
+                logger.info("Bot polling stopped")
+            
             if 'scheduler_service' in locals() and scheduler_service:
                 await scheduler_service.stop()
                 logger.info("Scheduler stopped")

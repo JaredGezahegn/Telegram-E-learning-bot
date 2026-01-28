@@ -22,6 +22,10 @@ class Config:
         self.database_path = os.getenv("DATABASE_PATH", "lessons.db")
         self.database_type = os.getenv("DATABASE_TYPE", "sqlite")  # sqlite or supabase
         
+        # Admin Configuration
+        admin_ids_str = os.getenv("ADMIN_USER_IDS", "")
+        self.admin_user_ids = [int(id.strip()) for id in admin_ids_str.split(",") if id.strip().isdigit()]
+        
         # Supabase Configuration (if using Supabase)
         self.supabase_url = os.getenv("SUPABASE_URL")
         self.supabase_anon_key = os.getenv("SUPABASE_ANON_KEY")

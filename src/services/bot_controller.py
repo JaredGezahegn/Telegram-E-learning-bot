@@ -3,11 +3,12 @@
 import asyncio
 import logging
 import re
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from datetime import datetime
 import time
 
-from telegram import Bot
+from telegram import Bot, Update
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters
 from telegram.error import TelegramError, RetryAfter, TimedOut, NetworkError, BadRequest, Forbidden
 from telegram.constants import ParseMode
 
@@ -35,8 +36,9 @@ class BotController:
         self.retry_attempts = config.retry_attempts
         self.retry_delay = config.retry_delay
         
-        # Initialize bot instance
+        # Initialize bot instance and application
         self.bot = Bot(token=self.bot_token)
+        self.application = None
         self._validated = False
         
         # Initialize resilience service
@@ -638,6 +640,64 @@ class BotController:
         }
 
 
+    async def close(self) -> None:
+        """Close bot connection and cleanup resources."""
+        try:
+            if self.application:
+                await self.application.stop()
+                await self.application.shutdown()
+            await self.bot.close()
+            logger.info("Bot controller closed successfully")
+        except Exception as e:
+            logger.error(f"Error closing bot controller: {e}")
+    
+    def setup_application(self) -> None:
+        """Set up the Telegram application for handling updates."""
+        if not self.application:
+            self.application = Application.builder().token(self.bot_token).build()
+    
+    def register_command_handlers(self, command_handler_instance) -> None:
+        """Register command handlers with the bot application.
+        
+        Args:
+            command_handler_instance: Instance of CommandHandler class with command methods
+        """
+        if not self.application:
+            self.setup_application()
+        
+        # Register user commands
+        self.application.add_handler(CommandHandler("start", command_handler_instance.start_command))
+        self.application.add_handler(CommandHandler("help", command_handler_instance.help_command))
+        self.application.add_handler(CommandHandler("latest", command_handler_instance.latest_command))
+        self.application.add_handler(CommandHandler("quiz", command_handler_instance.quiz_command))
+        self.application.add_handler(CommandHandler("progress", command_handler_instance.progress_command))
+        
+        # Register admin commands
+        self.application.add_handler(CommandHandler("admin_post", command_handler_instance.admin_post_command))
+        self.application.add_handler(CommandHandler("admin_status", command_handler_instance.admin_status_command))
+        
+        # Register callback query handler for inline keyboards
+        self.application.add_handler(CallbackQueryHandler(command_handler_instance.handle_callback_query))
+        
+        logger.info("Command handlers registered successfully")
+    
+    async def start_polling(self) -> None:
+        """Start polling for updates (for interactive features)."""
+        if not self.application:
+            raise RuntimeError("Application not set up. Call setup_application() first.")
+        
+        logger.info("Starting bot polling for interactive features...")
+        await self.application.initialize()
+        await self.application.start()
+        await self.application.updater.start_polling()
+    
+    async def stop_polling(self) -> None:
+        """Stop polling for updates."""
+        if self.application and self.application.updater:
+            await self.application.updater.stop()
+            logger.info("Bot polling stopped")
+
+
 # Convenience function for creating and initializing bot controller
 async def create_bot_controller(bot_token: Optional[str] = None) -> Optional[BotController]:
     """Create and initialize a bot controller.
@@ -654,12 +714,4 @@ async def create_bot_controller(bot_token: Optional[str] = None) -> Optional[Bot
         return controller
     else:
         await controller.close()
-        return None  
-  
-    async def close(self) -> None:
-        """Close bot connection and cleanup resources."""
-        try:
-            await self.bot.close()
-            logger.info("Bot controller closed successfully")
-        except Exception as e:
-            logger.error(f"Error closing bot controller: {e}")
+        return None
