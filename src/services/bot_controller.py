@@ -8,7 +8,7 @@ from datetime import datetime
 import time
 
 from telegram import Bot, Update
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 from telegram.error import TelegramError, RetryAfter, TimedOut, NetworkError, BadRequest, Forbidden
 from telegram.constants import ParseMode
 
@@ -646,6 +646,10 @@ class BotController:
             if self.application:
                 await self.application.stop()
                 await self.application.shutdown()
+        except Exception as e:
+            logger.error(f"Error closing application: {e}")
+        
+        try:
             await self.bot.close()
             logger.info("Bot controller closed successfully")
         except Exception as e:
@@ -672,14 +676,277 @@ class BotController:
         self.application.add_handler(CommandHandler("quiz", command_handler_instance.quiz_command))
         self.application.add_handler(CommandHandler("progress", command_handler_instance.progress_command))
         
+        # Register additional user commands (if implemented)
+        if hasattr(command_handler_instance, 'subscribe_command'):
+            self.application.add_handler(CommandHandler("subscribe", command_handler_instance.subscribe_command))
+        
         # Register admin commands
         self.application.add_handler(CommandHandler("admin_post", command_handler_instance.admin_post_command))
         self.application.add_handler(CommandHandler("admin_status", command_handler_instance.admin_status_command))
+        
+        # Register additional admin commands (if implemented)
+        if hasattr(command_handler_instance, 'admin_quiz_command'):
+            self.application.add_handler(CommandHandler("admin_quiz", command_handler_instance.admin_quiz_command))
+        if hasattr(command_handler_instance, 'admin_schedule_command'):
+            self.application.add_handler(CommandHandler("admin_schedule", command_handler_instance.admin_schedule_command))
+        if hasattr(command_handler_instance, 'admin_stats_command'):
+            self.application.add_handler(CommandHandler("admin_stats", command_handler_instance.admin_stats_command))
         
         # Register callback query handler for inline keyboards
         self.application.add_handler(CallbackQueryHandler(command_handler_instance.handle_callback_query))
         
         logger.info("Command handlers registered successfully")
+    
+    def register_message_handlers(self, command_handler_instance) -> None:
+        """Register message handlers for non-command messages.
+        
+        Args:
+            command_handler_instance: Instance of CommandHandler class with message handler methods
+        """
+        if not self.application:
+            self.setup_application()
+        
+        # Register text message handler for general messages (if implemented)
+        if hasattr(command_handler_instance, 'handle_text_message'):
+            self.application.add_handler(MessageHandler(
+                filters.TEXT & ~filters.COMMAND, 
+                command_handler_instance.handle_text_message
+            ))
+        
+        # Register photo message handler (if implemented)
+        if hasattr(command_handler_instance, 'handle_photo_message'):
+            self.application.add_handler(MessageHandler(
+                filters.PHOTO, 
+                command_handler_instance.handle_photo_message
+            ))
+        
+        # Register document message handler (if implemented)
+        if hasattr(command_handler_instance, 'handle_document_message'):
+            self.application.add_handler(MessageHandler(
+                filters.Document.ALL, 
+                command_handler_instance.handle_document_message
+            ))
+        
+        logger.info("Message handlers registered successfully")
+    
+    def register_callback_query_handlers(self, command_handler_instance) -> None:
+        """Register callback query handlers for inline keyboard interactions.
+        
+        Args:
+            command_handler_instance: Instance of CommandHandler class with callback handler methods
+        """
+        if not self.application:
+            self.setup_application()
+        
+        # Register main callback query handler
+        self.application.add_handler(CallbackQueryHandler(command_handler_instance.handle_callback_query))
+        
+        # Register specific callback patterns (if implemented)
+        if hasattr(command_handler_instance, 'handle_quiz_callback'):
+            self.application.add_handler(CallbackQueryHandler(
+                command_handler_instance.handle_quiz_callback, 
+                pattern=r'^(quiz_|answer_)'
+            ))
+        
+        if hasattr(command_handler_instance, 'handle_lesson_callback'):
+            self.application.add_handler(CallbackQueryHandler(
+                command_handler_instance.handle_lesson_callback, 
+                pattern=r'^lesson_'
+            ))
+        
+        if hasattr(command_handler_instance, 'handle_admin_callback'):
+            self.application.add_handler(CallbackQueryHandler(
+                command_handler_instance.handle_admin_callback, 
+                pattern=r'^admin_'
+            ))
+        
+        logger.info("Callback query handlers registered successfully")
+    
+    def register_all_handlers(self, command_handler_instance) -> None:
+        """Register all handlers (commands, messages, callbacks) in one call.
+        
+        Args:
+            command_handler_instance: Instance of CommandHandler class with all handler methods
+        """
+        self.register_command_handlers(command_handler_instance)
+        self.register_message_handlers(command_handler_instance)
+        self.register_callback_query_handlers(command_handler_instance)
+        
+        logger.info("All handlers registered successfully")
+    
+    def get_registered_handlers_info(self) -> Dict[str, Any]:
+        """Get information about registered handlers for monitoring and debugging.
+        
+        Returns:
+            Dictionary with handler information
+        """
+        if not self.application:
+            return {'error': 'Application not initialized'}
+        
+        handler_info = {
+            'total_handlers': len(self.application.handlers[0]) if self.application.handlers else 0,
+            'command_handlers': [],
+            'message_handlers': [],
+            'callback_handlers': [],
+            'other_handlers': []
+        }
+        
+        # Keep track of registered commands manually since telegram library doesn't expose them easily
+        registered_commands = [
+            'start', 'help', 'latest', 'quiz', 'progress',  # User commands
+            'admin_post', 'admin_status'  # Admin commands (always registered)
+        ]
+        
+        # Add optional commands if they exist
+        optional_commands = [
+            ('subscribe', 'subscribe_command'),
+            ('admin_quiz', 'admin_quiz_command'),
+            ('admin_schedule', 'admin_schedule_command'),
+            ('admin_stats', 'admin_stats_command')
+        ]
+        
+        if self.application.handlers:
+            command_count = 0
+            for handler in self.application.handlers[0]:
+                handler_type = type(handler).__name__
+                
+                if handler_type == 'CommandHandler':
+                    # Use our known command list since telegram doesn't expose command names easily
+                    command_name = 'unknown'
+                    callback_name = getattr(handler.callback, '__name__', 'unknown') if handler.callback else 'unknown'
+                    
+                    # Try to match by callback name
+                    if callback_name.endswith('_command'):
+                        potential_command = callback_name.replace('_command', '')
+                        if potential_command in registered_commands:
+                            command_name = potential_command
+                        else:
+                            # Check optional commands
+                            for opt_cmd, opt_callback in optional_commands:
+                                if callback_name == opt_callback:
+                                    command_name = opt_cmd
+                                    break
+                    
+                    # If still unknown, use the index to map to our known commands
+                    if command_name == 'unknown' and command_count < len(registered_commands):
+                        command_name = registered_commands[command_count]
+                    
+                    handler_info['command_handlers'].append({
+                        'command': command_name,
+                        'callback': callback_name
+                    })
+                    command_count += 1
+                    
+                elif handler_type == 'MessageHandler':
+                    handler_info['message_handlers'].append({
+                        'filters': str(handler.filters) if hasattr(handler, 'filters') else 'unknown',
+                        'callback': getattr(handler.callback, '__name__', 'unknown') if handler.callback else 'unknown'
+                    })
+                elif handler_type == 'CallbackQueryHandler':
+                    pattern_info = 'no pattern'
+                    if hasattr(handler, 'pattern') and handler.pattern:
+                        pattern_info = str(handler.pattern)
+                    
+                    handler_info['callback_handlers'].append({
+                        'pattern': pattern_info,
+                        'callback': getattr(handler.callback, '__name__', 'unknown') if handler.callback else 'unknown'
+                    })
+                else:
+                    handler_info['other_handlers'].append({
+                        'type': handler_type,
+                        'callback': getattr(handler.callback, '__name__', 'unknown') if handler.callback else 'unknown'
+                    })
+        
+        return handler_info
+    
+    async def handle_user_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """Route user commands to appropriate handlers with validation.
+        
+        Args:
+            update: Telegram update object
+            context: Telegram context object
+        """
+        if not update.message or not update.message.text:
+            return
+        
+        command_text = update.message.text
+        if not command_text.startswith('/'):
+            return
+        
+        # Extract command and arguments
+        parts = command_text.split()
+        command = parts[0][1:]  # Remove the '/' prefix
+        args = parts[1:] if len(parts) > 1 else []
+        
+        user_id = update.effective_user.id
+        
+        # Log command usage
+        logger.info(f"User {user_id} executed command: /{command} with args: {args}")
+        
+        # Validate command exists (this is handled by the telegram library's dispatcher)
+        # The actual command execution is handled by the registered CommandHandler instances
+        
+    async def handle_admin_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """Route admin commands with authorization check.
+        
+        Args:
+            update: Telegram update object
+            context: Telegram context object
+        """
+        if not update.message or not update.message.text:
+            return
+        
+        command_text = update.message.text
+        if not command_text.startswith('/admin_'):
+            return
+        
+        user_id = update.effective_user.id
+        
+        # This method can be used for additional admin command validation
+        # The actual authorization is handled in the CommandHandler class
+        logger.info(f"Admin command attempt by user {user_id}: {command_text}")
+    
+    async def send_interactive_response(self, chat_id: int, message: str, 
+                                     parse_mode: str = ParseMode.MARKDOWN,
+                                     reply_markup=None) -> Dict[str, Any]:
+        """Send formatted interactive response to users.
+        
+        Args:
+            chat_id: Target chat ID
+            message: Message text to send
+            parse_mode: Telegram parse mode (HTML or Markdown)
+            reply_markup: Optional inline keyboard markup
+            
+        Returns:
+            Dictionary with send result
+        """
+        if not self._validated:
+            raise RuntimeError("Bot controller not initialized. Call initialize() first.")
+        
+        try:
+            sent_message = await self.bot.send_message(
+                chat_id=chat_id,
+                text=message,
+                parse_mode=parse_mode,
+                reply_markup=reply_markup,
+                disable_web_page_preview=True
+            )
+            
+            return {
+                'success': True,
+                'message_id': sent_message.message_id,
+                'chat_id': chat_id,
+                'timestamp': datetime.utcnow()
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to send interactive response to {chat_id}: {e}")
+            return {
+                'success': False,
+                'error': str(e),
+                'chat_id': chat_id,
+                'timestamp': datetime.utcnow()
+            }
     
     async def start_polling(self) -> None:
         """Start polling for updates (for interactive features)."""

@@ -4,14 +4,19 @@ import logging
 from typing import Dict, Any, Optional, List
 from datetime import datetime
 import asyncio
+import time
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 
 from ..models.lesson import Lesson
+from ..models.user_profile import UserProfile, UserSession
+from ..models.admin_log import AdminActionLog
 from .lesson_manager import LessonManager
 from .quiz_generator import QuizGenerator
 from .scheduler import SchedulerService
+from .user_repository import UserRepository, create_user_repository
+from .progress_tracker import ProgressTracker, create_progress_tracker
 
 
 logger = logging.getLogger(__name__)
@@ -36,14 +41,89 @@ class CommandHandler:
         self.quiz_generator = QuizGenerator()
         self.admin_user_ids = admin_user_ids or config.admin_user_ids
         
+        # Initialize user repository and progress tracker
+        try:
+            from ..models.supabase_database import create_supabase_manager
+            supabase_manager = create_supabase_manager()
+            self.user_repo = create_user_repository(supabase_manager)
+            self.progress_tracker = create_progress_tracker(self.user_repo)
+            logger.info("User repository and progress tracker initialized")
+        except Exception as e:
+            logger.error(f"Failed to initialize user repository: {e}")
+            self.user_repo = None
+            self.progress_tracker = None
+        
     def is_admin(self, user_id: int) -> bool:
         """Check if user has admin privileges."""
         return user_id in self.admin_user_ids
     
+    async def _record_command_usage(self, command_name: str, update: Update, success: bool = True, 
+                                  start_time: float = None, error_type: str = None) -> None:
+        """Record command usage statistics.
+        
+        Args:
+            command_name: Name of the command
+            update: Telegram update object
+            success: Whether command was successful
+            start_time: Command start time for response time calculation
+            error_type: Type of error if command failed
+        """
+        if not self.progress_tracker:
+            return
+        
+        try:
+            user_id = update.effective_user.id
+            chat_type = update.effective_chat.type
+            response_time_ms = int((time.time() - start_time) * 1000) if start_time else 0
+            
+            self.progress_tracker.record_command_usage(
+                command_name=command_name,
+                user_id=user_id,
+                chat_type=chat_type,
+                success=success,
+                response_time_ms=response_time_ms,
+                error_type=error_type
+            )
+        except Exception as e:
+            logger.error(f"Error recording command usage: {e}")
+    
+    async def _ensure_user_profile(self, update: Update) -> Optional[UserProfile]:
+        """Ensure user profile exists and return it.
+        
+        Args:
+            update: Telegram update object
+            
+        Returns:
+            UserProfile or None if failed
+        """
+        if not self.user_repo:
+            return None
+        
+        try:
+            user = update.effective_user
+            chat = update.effective_chat
+            
+            return self.user_repo.get_or_create_user_profile(
+                user_id=user.id,
+                username=user.username,
+                first_name=user.first_name,
+                chat_id=chat.id
+            )
+        except Exception as e:
+            logger.error(f"Error ensuring user profile: {e}")
+            return None
+    
     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /start command."""
-        user = update.effective_user
-        welcome_text = f"""
+        start_time = time.time()
+        
+        try:
+            user = update.effective_user
+            
+            # Ensure user profile exists
+            await self._ensure_user_profile(update)
+            
+            welcome_text = f"""
 🎓 **Welcome to Tutor.Me English Bot!**
 
 Hello {user.first_name}! I'm your English learning companion.
@@ -61,10 +141,17 @@ Hello {user.first_name}! I'm your English learning companion.
 /progress - Check your learning stats
 
 Let's improve your English together! 🚀
-        """
-        
-        await update.message.reply_text(welcome_text, parse_mode='Markdown')
-        logger.info(f"User {user.id} ({user.first_name}) started the bot")
+            """
+            
+            await update.message.reply_text(welcome_text, parse_mode='Markdown')
+            logger.info(f"User {user.id} ({user.first_name}) started the bot")
+            
+            await self._record_command_usage("start", update, True, start_time)
+            
+        except Exception as e:
+            logger.error(f"Error in start_command: {e}")
+            await update.message.reply_text("❌ Sorry, something went wrong. Please try again later.")
+            await self._record_command_usage("start", update, False, start_time, str(e))
     
     async def help_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /help command."""
@@ -102,11 +189,17 @@ Let's improve your English together! 🚀
     
     async def latest_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /latest command - get the most recent lesson."""
+        start_time = time.time()
+        
         try:
+            # Ensure user profile exists
+            await self._ensure_user_profile(update)
+            
             # Get the last posted lesson
             lessons = self.lesson_manager.get_all_lessons()
             if not lessons:
                 await update.message.reply_text("❌ No lessons available yet!")
+                await self._record_command_usage("latest", update, False, start_time, "no_lessons")
                 return
             
             # Find the most recent lesson (highest ID that was posted)
@@ -137,11 +230,24 @@ Let's improve your English together! 🚀
             reply_markup = InlineKeyboardMarkup(keyboard)
             
             await update.message.reply_text(lesson_text, parse_mode='Markdown', reply_markup=reply_markup)
+            
+            # Record lesson completion in progress tracker
+            if self.progress_tracker:
+                self.progress_tracker.record_lesson_completion(
+                    user_id=update.effective_user.id,
+                    lesson_id=latest_lesson.id,
+                    lesson_title=latest_lesson.title,
+                    difficulty=latest_lesson.difficulty,
+                    category=latest_lesson.category
+                )
+            
             logger.info(f"User {update.effective_user.id} requested latest lesson: {latest_lesson.id}")
+            await self._record_command_usage("latest", update, True, start_time)
             
         except Exception as e:
             logger.error(f"Error in latest_command: {e}")
             await update.message.reply_text("❌ Sorry, couldn't retrieve the latest lesson. Please try again later.")
+            await self._record_command_usage("latest", update, False, start_time, str(e))
     
     async def quiz_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /quiz command - get a practice quiz."""
@@ -183,18 +289,49 @@ Let's improve your English together! 🚀
     
     async def progress_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /progress command - show user progress."""
-        user = update.effective_user
+        start_time = time.time()
         
-        # For now, show basic stats (can be enhanced with user tracking)
         try:
-            lessons = self.lesson_manager.get_all_lessons()
-            total_lessons = len(lessons)
+            user = update.effective_user
             
-            # Get basic system stats
-            stats = self.lesson_manager.get_system_stats()
+            # Ensure user profile exists
+            profile = await self._ensure_user_profile(update)
             
-            progress_text = f"""
+            if self.progress_tracker and profile:
+                # Get comprehensive progress data
+                progress_report = self.progress_tracker.generate_progress_report(user.id)
+                
+                if progress_report:
+                    await update.message.reply_text(progress_report, parse_mode='Markdown')
+                else:
+                    # Fallback to basic progress
+                    basic_progress = f"""
 📊 **Your Learning Progress**
+
+👤 **User:** {user.first_name}
+🆔 **User ID:** {user.id}
+
+📚 **Your Stats:**
+• Lessons completed: {profile.total_lessons_completed}
+• Quizzes taken: {profile.total_quizzes_taken}
+• Average quiz score: {profile.average_quiz_score:.1f}%
+• Current streak: {profile.current_streak} days
+• Longest streak: {profile.longest_streak} days
+
+🎯 **Keep Learning!**
+Use /latest to catch up on recent lessons
+Use /quiz to practice anytime
+                    """
+                    await update.message.reply_text(basic_progress, parse_mode='Markdown')
+            else:
+                # Fallback to system stats if user tracking unavailable
+                lessons = self.lesson_manager.get_all_lessons()
+                total_lessons = len(lessons)
+                
+                stats = self.lesson_manager.get_system_stats()
+                
+                progress_text = f"""
+📊 **Learning Progress**
 
 👤 **User:** {user.first_name}
 🆔 **User ID:** {user.id}
@@ -207,14 +344,19 @@ Let's improve your English together! 🚀
 🎯 **Keep Learning!**
 Use /latest to catch up on recent lessons
 Use /quiz to practice anytime
-            """
+
+💡 **Tip:** Your personal progress tracking will be available soon!
+                """
+                
+                await update.message.reply_text(progress_text, parse_mode='Markdown')
             
-            await update.message.reply_text(progress_text, parse_mode='Markdown')
             logger.info(f"User {user.id} checked progress")
+            await self._record_command_usage("progress", update, True, start_time)
             
         except Exception as e:
             logger.error(f"Error in progress_command: {e}")
             await update.message.reply_text("❌ Sorry, couldn't retrieve progress. Please try again later.")
+            await self._record_command_usage("progress", update, False, start_time, str(e))
     
     # Admin Commands
     async def admin_post_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -300,8 +442,14 @@ Use /quiz to practice anytime
         query = update.callback_query
         await query.answer()
         
+        start_time = time.time()
+        
         try:
             data = query.data
+            user_id = query.from_user.id
+            
+            # Ensure user profile exists
+            await self._ensure_user_profile(update)
             
             if data.startswith("quiz_"):
                 # Handle quiz request from lesson
@@ -319,7 +467,7 @@ Use /quiz to practice anytime
                         for i, option in enumerate(quiz.options):
                             keyboard.append([InlineKeyboardButton(
                                 f"{chr(65 + i)}. {option.text[:50]}{'...' if len(option.text) > 50 else ''}", 
-                                callback_data=f"answer_{lesson_id}_{i}_{1 if option.is_correct else 0}"
+                                callback_data=f"answer_{lesson_id}_{i}_{1 if option.is_correct else 0}_{quiz.id if hasattr(quiz, 'id') else 0}"
                             )])
                         
                         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -335,6 +483,29 @@ Use /quiz to practice anytime
                 lesson_id = int(parts[1])
                 answer_index = int(parts[2])
                 is_correct = bool(int(parts[3]))
+                quiz_id = int(parts[4]) if len(parts) > 4 else 0
+                
+                # Calculate score (simple: 100% if correct, 0% if incorrect)
+                score = 100.0 if is_correct else 0.0
+                
+                # Record quiz attempt in progress tracker
+                if self.progress_tracker:
+                    self.progress_tracker.record_quiz_attempt(
+                        user_id=user_id,
+                        quiz_id=quiz_id,
+                        lesson_id=lesson_id,
+                        score=score,
+                        total_questions=1,
+                        correct_answers=1 if is_correct else 0,
+                        time_taken=int((time.time() - start_time) * 1000),  # Convert to ms
+                        is_practice=False,
+                        answers=[{
+                            'question_index': 0,
+                            'user_answer_index': answer_index,
+                            'is_correct': is_correct,
+                            'timestamp': datetime.utcnow().isoformat()
+                        }]
+                    )
                 
                 if is_correct:
                     result_text = f"✅ **Correct!**\n\nGreat job! You got the right answer."
@@ -354,7 +525,7 @@ Use /quiz to practice anytime
                 
                 await query.edit_message_text(result_text, parse_mode='Markdown', reply_markup=reply_markup)
                 
-                logger.info(f"User {query.from_user.id} answered quiz: lesson={lesson_id}, correct={is_correct}")
+                logger.info(f"User {user_id} answered quiz: lesson={lesson_id}, correct={is_correct}")
         
         except Exception as e:
             logger.error(f"Error handling callback query: {e}")
