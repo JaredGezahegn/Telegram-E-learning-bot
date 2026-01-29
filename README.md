@@ -31,6 +31,8 @@ cp .env.example .env
 # Edit .env with your bot token and channel ID
 ```
 
+⚠️ **Security Note**: Never commit your `.env` file with real credentials to version control. The `.env` file contains sensitive information like bot tokens and API keys.
+
 ### 4. Load Sample Lessons
 ```bash
 python -m src.load_lessons
@@ -124,6 +126,20 @@ The bot includes comprehensive monitoring:
 - Structured logging
 - Error tracking and recovery
 - Resource monitoring
+
+## 🔒 Security
+
+### Environment Variables
+- **Never commit** your `.env` file with real credentials to version control
+- Use `.env.example` as a template for required environment variables
+- Store sensitive data (bot tokens, API keys) securely in your deployment platform
+- Rotate bot tokens periodically for enhanced security
+
+### Best Practices
+- Keep your bot token private and secure
+- Use environment variables for all sensitive configuration
+- Enable two-factor authentication on your Telegram account
+- Monitor bot usage and logs for suspicious activity
 
 ## 🤝 Contributing
 

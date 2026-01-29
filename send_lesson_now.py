@@ -6,9 +6,17 @@ import os
 import json
 from telegram import Bot
 
-# Bot configuration
-BOT_TOKEN = "8171475486:AAF_mIDn8pKZ5FnaygNAH-KsSaqtgMNc1wQ"
-CHANNEL_ID = "-1003400813257"
+# Bot configuration - Load from environment variables
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") or os.getenv("BOT_TOKEN")
+CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID") or os.getenv("CHANNEL_ID")
+
+if not BOT_TOKEN:
+    print("❌ Error: TELEGRAM_BOT_TOKEN or BOT_TOKEN environment variable not set")
+    exit(1)
+
+if not CHANNEL_ID:
+    print("❌ Error: TELEGRAM_CHANNEL_ID or CHANNEL_ID environment variable not set")
+    exit(1)
 
 async def send_lesson():
     """Send a lesson to the channel."""
