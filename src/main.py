@@ -73,8 +73,8 @@ async def main_async():
             logger.info("Bot application setup completed")
         except Exception as setup_error:
             logger.error(f"Failed to setup bot application: {setup_error}")
-            logger.info("Attempting to continue without full application setup...")
-            # Continue execution - some features may be limited but basic functionality should work
+            logger.info("Continuing without interactive features - basic lesson posting will still work")
+            # Continue execution - basic functionality should work without interactive features
         
         # Create and start scheduler
         from src.services.scheduler import create_scheduler_service
@@ -85,14 +85,22 @@ async def main_async():
         logger.info("Scheduler service started successfully")
         
         # Create and register command handler for interactive features
-        from src.services.command_handler import CommandHandler
-        command_handler = CommandHandler(lesson_manager, scheduler_service)
-        bot_controller.register_command_handlers(command_handler)
-        logger.info("Interactive command handlers registered")
+        try:
+            from src.services.command_handler import CommandHandler
+            command_handler = CommandHandler(lesson_manager, scheduler_service)
+            bot_controller.register_command_handlers(command_handler)
+            logger.info("Interactive command handlers registered")
+        except Exception as handler_error:
+            logger.error(f"Failed to register command handlers: {handler_error}")
+            logger.info("Interactive commands will not be available")
         
         # Start polling for interactive features
-        await bot_controller.start_polling()
-        logger.info("Bot polling started for interactive features")
+        try:
+            await bot_controller.start_polling()
+            logger.info("Bot polling started for interactive features")
+        except Exception as polling_error:
+            logger.error(f"Failed to start polling: {polling_error}")
+            logger.info("Interactive features will not be available")
         
         # Log scheduler status
         status = scheduler_service.get_scheduler_status()

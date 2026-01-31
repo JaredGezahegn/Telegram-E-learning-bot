@@ -1,4 +1,4 @@
-python-telegram-bot==20.6
+python-telegram-bot==21.9
 APScheduler==3.10.4
 hypothesis==6.92.2
 python-dotenv==1.0.0

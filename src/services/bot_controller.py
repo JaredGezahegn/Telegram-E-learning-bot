@@ -659,34 +659,67 @@ class BotController:
         """Set up the Telegram application for handling updates."""
         if not self.application:
             try:
+                # Import at the top of the method to avoid scope issues
+                from telegram.ext import Application, ApplicationBuilder
+                from telegram import Bot
+                
                 # Try the standard approach first
                 self.application = Application.builder().token(self.bot_token).build()
+                logger.info("Successfully created application with standard approach")
+                
             except AttributeError as e:
                 if "_Updater__polling_cleanup_cb" in str(e):
                     # Handle compatibility issue with newer Python versions
                     logger.warning(f"Telegram bot library compatibility issue detected: {e}")
                     logger.info("Attempting compatibility workaround...")
                     
-                    # Alternative approach for compatibility
-                    from telegram.ext import ApplicationBuilder
-                    builder = ApplicationBuilder()
-                    builder.token(self.bot_token)
-                    
-                    # Build without the problematic updater initialization
                     try:
+                        # Alternative approach for compatibility - use ApplicationBuilder directly
+                        from telegram.ext import ApplicationBuilder
+                        builder = ApplicationBuilder()
+                        builder.token(self.bot_token)
+                        
+                        # Try to build with minimal configuration
                         self.application = builder.build()
                         logger.info("Successfully created application with compatibility workaround")
+                        
                     except Exception as fallback_error:
-                        logger.error(f"Fallback approach also failed: {fallback_error}")
-                        # Last resort: create minimal application
-                        from telegram.ext import Application
-                        from telegram import Bot
-                        bot = Bot(token=self.bot_token)
-                        self.application = Application.builder().bot(bot).build()
-                        logger.info("Created minimal application as last resort")
+                        logger.error(f"ApplicationBuilder approach failed: {fallback_error}")
+                        
+                        try:
+                            # Last resort: create application with pre-built bot
+                            from telegram.ext import Application
+                            from telegram import Bot
+                            bot = Bot(token=self.bot_token)
+                            self.application = Application.builder().bot(bot).build()
+                            logger.info("Created application with pre-built bot as last resort")
+                            
+                        except Exception as final_error:
+                            logger.error(f"All application setup methods failed: {final_error}")
+                            # Create a minimal mock application to prevent complete failure
+                            self.application = None
+                            logger.warning("Could not create application - interactive features will be disabled")
+                            return
                 else:
                     # Re-raise if it's a different AttributeError
                     raise
+                    
+            except Exception as e:
+                logger.error(f"Unexpected error setting up application: {e}")
+                try:
+                    # Try basic fallback with explicit imports
+                    from telegram.ext import Application
+                    from telegram import Bot
+                    bot = Bot(token=self.bot_token)
+                    self.application = Application.builder().bot(bot).build()
+                    logger.info("Created application with basic fallback")
+                    
+                except Exception as final_error:
+                    logger.error(f"All application setup methods failed: {final_error}")
+                    # Set to None to prevent further errors
+                    self.application = None
+                    logger.warning("Could not create application - interactive features will be disabled")
+                    return
     
     def register_command_handlers(self, command_handler_instance) -> None:
         """Register command handlers with the bot application.
@@ -696,6 +729,11 @@ class BotController:
         """
         if not self.application:
             self.setup_application()
+        
+        # If application setup failed, skip handler registration
+        if not self.application:
+            logger.warning("Application not available - skipping command handler registration")
+            return
         
         # Register user commands
         self.application.add_handler(TelegramCommandHandler("start", command_handler_instance.start_command))
@@ -979,17 +1017,26 @@ class BotController:
     async def start_polling(self) -> None:
         """Start polling for updates (for interactive features)."""
         if not self.application:
-            raise RuntimeError("Application not set up. Call setup_application() first.")
+            logger.warning("Application not available - cannot start polling. Interactive features will be disabled.")
+            return
         
-        logger.info("Starting bot polling for interactive features...")
-        await self.application.initialize()
-        await self.application.start()
-        await self.application.updater.start_polling()
+        try:
+            logger.info("Starting bot polling for interactive features...")
+            await self.application.initialize()
+            await self.application.start()
+            await self.application.updater.start_polling()
+        except Exception as e:
+            logger.error(f"Failed to start polling: {e}")
+            logger.warning("Interactive features will be disabled")
     
     async def stop_polling(self) -> None:
         """Stop polling for updates."""
         if self.application and self.application.updater:
-            await self.application.updater.stop()
+            try:
+                await self.application.updater.stop()
+                logger.info("Bot polling stopped")
+            except Exception as e:
+                logger.error(f"Error stopping polling: {e}")
             logger.info("Bot polling stopped")
 
 
