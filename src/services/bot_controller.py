@@ -688,10 +688,10 @@ class BotController:
                         
                         try:
                             # Last resort: create application with pre-built bot
-                            from telegram.ext import Application
+                            from telegram.ext import Application as TelegramApplication
                             from telegram import Bot
                             bot = Bot(token=self.bot_token)
-                            self.application = Application.builder().bot(bot).build()
+                            self.application = TelegramApplication.builder().bot(bot).build()
                             logger.info("Created application with pre-built bot as last resort")
                             
                         except Exception as final_error:
@@ -707,17 +707,19 @@ class BotController:
             except Exception as e:
                 logger.error(f"Unexpected error setting up application: {e}")
                 try:
-                    # Try basic fallback with explicit imports
-                    from telegram.ext import Application
+                    # Try basic fallback with explicit imports and alias
+                    from telegram.ext import Application as TelegramApplication
                     from telegram import Bot
                     bot = Bot(token=self.bot_token)
-                    self.application = Application.builder().bot(bot).build()
+                    self.application = TelegramApplication.builder().bot(bot).build()
                     logger.info("Created application with basic fallback")
                     
                 except Exception as final_error:
                     logger.error(f"All application setup methods failed: {final_error}")
                     # Set to None to prevent further errors
                     self.application = None
+                    logger.warning("Could not create application - interactive features will be disabled")
+                    return
                     logger.warning("Could not create application - interactive features will be disabled")
                     return
     
