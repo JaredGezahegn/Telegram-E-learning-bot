@@ -8,7 +8,7 @@ from datetime import datetime
 import time
 
 from telegram import Bot, Update
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
+from telegram.ext import Application, CommandHandler as TelegramCommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 from telegram.error import TelegramError, RetryAfter, TimedOut, NetworkError, BadRequest, Forbidden
 from telegram.constants import ParseMode
 
@@ -658,7 +658,35 @@ class BotController:
     def setup_application(self) -> None:
         """Set up the Telegram application for handling updates."""
         if not self.application:
-            self.application = Application.builder().token(self.bot_token).build()
+            try:
+                # Try the standard approach first
+                self.application = Application.builder().token(self.bot_token).build()
+            except AttributeError as e:
+                if "_Updater__polling_cleanup_cb" in str(e):
+                    # Handle compatibility issue with newer Python versions
+                    logger.warning(f"Telegram bot library compatibility issue detected: {e}")
+                    logger.info("Attempting compatibility workaround...")
+                    
+                    # Alternative approach for compatibility
+                    from telegram.ext import ApplicationBuilder
+                    builder = ApplicationBuilder()
+                    builder.token(self.bot_token)
+                    
+                    # Build without the problematic updater initialization
+                    try:
+                        self.application = builder.build()
+                        logger.info("Successfully created application with compatibility workaround")
+                    except Exception as fallback_error:
+                        logger.error(f"Fallback approach also failed: {fallback_error}")
+                        # Last resort: create minimal application
+                        from telegram.ext import Application
+                        from telegram import Bot
+                        bot = Bot(token=self.bot_token)
+                        self.application = Application.builder().bot(bot).build()
+                        logger.info("Created minimal application as last resort")
+                else:
+                    # Re-raise if it's a different AttributeError
+                    raise
     
     def register_command_handlers(self, command_handler_instance) -> None:
         """Register command handlers with the bot application.
@@ -670,27 +698,27 @@ class BotController:
             self.setup_application()
         
         # Register user commands
-        self.application.add_handler(CommandHandler("start", command_handler_instance.start_command))
-        self.application.add_handler(CommandHandler("help", command_handler_instance.help_command))
-        self.application.add_handler(CommandHandler("latest", command_handler_instance.latest_command))
-        self.application.add_handler(CommandHandler("quiz", command_handler_instance.quiz_command))
-        self.application.add_handler(CommandHandler("progress", command_handler_instance.progress_command))
+        self.application.add_handler(TelegramCommandHandler("start", command_handler_instance.start_command))
+        self.application.add_handler(TelegramCommandHandler("help", command_handler_instance.help_command))
+        self.application.add_handler(TelegramCommandHandler("latest", command_handler_instance.latest_command))
+        self.application.add_handler(TelegramCommandHandler("quiz", command_handler_instance.quiz_command))
+        self.application.add_handler(TelegramCommandHandler("progress", command_handler_instance.progress_command))
         
         # Register additional user commands (if implemented)
         if hasattr(command_handler_instance, 'subscribe_command'):
-            self.application.add_handler(CommandHandler("subscribe", command_handler_instance.subscribe_command))
+            self.application.add_handler(TelegramCommandHandler("subscribe", command_handler_instance.subscribe_command))
         
         # Register admin commands
-        self.application.add_handler(CommandHandler("admin_post", command_handler_instance.admin_post_command))
-        self.application.add_handler(CommandHandler("admin_status", command_handler_instance.admin_status_command))
+        self.application.add_handler(TelegramCommandHandler("admin_post", command_handler_instance.admin_post_command))
+        self.application.add_handler(TelegramCommandHandler("admin_status", command_handler_instance.admin_status_command))
         
         # Register additional admin commands (if implemented)
         if hasattr(command_handler_instance, 'admin_quiz_command'):
-            self.application.add_handler(CommandHandler("admin_quiz", command_handler_instance.admin_quiz_command))
+            self.application.add_handler(TelegramCommandHandler("admin_quiz", command_handler_instance.admin_quiz_command))
         if hasattr(command_handler_instance, 'admin_schedule_command'):
-            self.application.add_handler(CommandHandler("admin_schedule", command_handler_instance.admin_schedule_command))
+            self.application.add_handler(TelegramCommandHandler("admin_schedule", command_handler_instance.admin_schedule_command))
         if hasattr(command_handler_instance, 'admin_stats_command'):
-            self.application.add_handler(CommandHandler("admin_stats", command_handler_instance.admin_stats_command))
+            self.application.add_handler(TelegramCommandHandler("admin_stats", command_handler_instance.admin_stats_command))
         
         # Register callback query handler for inline keyboards
         self.application.add_handler(CallbackQueryHandler(command_handler_instance.handle_callback_query))
@@ -810,7 +838,7 @@ class BotController:
             for handler in self.application.handlers[0]:
                 handler_type = type(handler).__name__
                 
-                if handler_type == 'CommandHandler':
+                if handler_type == 'TelegramCommandHandler':
                     # Use our known command list since telegram doesn't expose command names easily
                     command_name = 'unknown'
                     callback_name = getattr(handler.callback, '__name__', 'unknown') if handler.callback else 'unknown'

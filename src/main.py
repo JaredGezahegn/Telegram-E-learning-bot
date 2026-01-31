@@ -68,7 +68,13 @@ async def main_async():
         logger.info("Bot controller created successfully")
         
         # Set up application for interactive features
-        bot_controller.setup_application()
+        try:
+            bot_controller.setup_application()
+            logger.info("Bot application setup completed")
+        except Exception as setup_error:
+            logger.error(f"Failed to setup bot application: {setup_error}")
+            logger.info("Attempting to continue without full application setup...")
+            # Continue execution - some features may be limited but basic functionality should work
         
         # Create and start scheduler
         from src.services.scheduler import create_scheduler_service

@@ -1,4 +1,4 @@
-python-telegram-bot==20.7
+python-telegram-bot==20.6
 APScheduler==3.10.4
 hypothesis==6.92.2
 python-dotenv==1.0.0
@@ -7,3 +7,4 @@ pytest-asyncio==0.21.1
 psutil==5.9.6
 requests==2.31.0
 pytz==2023.3
+supabase==2.3.4
