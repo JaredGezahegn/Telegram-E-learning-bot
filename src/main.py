@@ -17,13 +17,25 @@ shutdown_event = asyncio.Event()
 
 def setup_logging():
     """Set up logging configuration."""
+    # Configure file handler with UTF-8 encoding
+    file_handler = logging.FileHandler('bot.log', encoding='utf-8')
+    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+    
+    # Configure console handler with UTF-8 encoding and error handling
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+    
+    # Set encoding for Windows console
+    if sys.platform == 'win32':
+        try:
+            sys.stdout.reconfigure(encoding='utf-8')
+        except:
+            # If reconfigure fails, use errors='replace' to avoid crashes
+            console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+    
     logging.basicConfig(
         level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.StreamHandler(sys.stdout),
-            logging.FileHandler('bot.log')
-        ]
+        handlers=[console_handler, file_handler]
     )
 
 def signal_handler(signum, frame):
@@ -108,8 +120,8 @@ async def main_async():
         logger.info(f"Next run time: {status.get('next_run_time', 'Not scheduled')}")
         logger.info(f"Posting time: {status.get('posting_time', 'Unknown')} {status.get('timezone', '')}")
         
-        logger.info("🎉 Telegram English Bot started successfully!")
-        logger.info("📅 Daily lessons will be posted automatically")
+        logger.info("Telegram English Bot started successfully!")
+        logger.info("Daily lessons will be posted automatically")
         
         # Wait for shutdown signal
         await shutdown_event.wait()
