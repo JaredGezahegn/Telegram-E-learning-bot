@@ -1024,12 +1024,30 @@ class BotController:
         
         try:
             logger.info("Starting bot polling for interactive features...")
+            
+            # Test for conflicts before starting polling
+            try:
+                test_updates = await self.bot.get_updates(timeout=1, limit=1)
+                logger.info("✅ No bot instance conflicts detected")
+            except Exception as conflict_error:
+                if "terminated by other getUpdates" in str(conflict_error):
+                    logger.error("❌ CONFLICT: Another bot instance is already running!")
+                    logger.error("   This usually means:")
+                    logger.error("   1. Bot is running locally AND on Render")
+                    logger.error("   2. Multiple Render instances are active")
+                    logger.error("   3. Previous instance didn't shut down properly")
+                    logger.error("   Solution: Stop all other instances before starting this one")
+                    raise RuntimeError("Multiple bot instances detected - cannot start polling") from conflict_error
+                # Other errors are non-fatal, continue
+                logger.warning(f"Could not test for conflicts: {conflict_error}")
+            
             await self.application.initialize()
             await self.application.start()
             await self.application.updater.start_polling()
         except Exception as e:
             logger.error(f"Failed to start polling: {e}")
             logger.warning("Interactive features will be disabled")
+            raise
     
     async def stop_polling(self) -> None:
         """Stop polling for updates."""
